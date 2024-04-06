@@ -1,7 +1,79 @@
-#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <map>
 using namespace std;
 
+map<string, vector<string>> registers;
+unsigned int pc; // program counter
+unsigned char memory[];
+
+void ADDI (string rd, string rs1, string imm) 
+{
+	int temp1 = stoi(rs1);
+	int temp2 = stoi(imm);
+	int temp3 = stoi(rd);
+	int temp3 = temp2 + temp1;
+}
+
+void SLTI(string rd, string rs1, string imm)
+{
+	int temp1 = stoi(rs1);
+	int temp2 = stoi(imm);
+	int temp3 = stoi(rd);
+	if (temp1 < temp2) 
+		temp3 = 1;
+	else
+		temp3 = 0;	
+}
+
+void SLTIU(string rd, string rs1, string imm) 
+{
+	int temp1 = stoi(rs1);
+	int temp2 = stoi(imm);
+	int temp3 = stoi(rd);
+	if (imm == "1")
+	{
+		if (temp1 == 0)
+			temp3 = 1;
+		else
+			temp3 = 0;
+	}
+	else
+	{
+		if (temp1 < temp2)
+			temp3 = 1;
+		else
+			temp3 = 0;
+	}
+}
+
+void XORI(string rd, string rs1, string imm) 
+{
+	int temp1 = stoi(rs1);
+	int temp2 = stoi(imm);
+	int temp3 = stoi(rd);
+	temp3 = temp1 ^ temp2;
+}
+
+void ORI(string rd, string rs1, string imm)
+{
+	int temp1 = stoi(rs1);
+	int temp2 = stoi(imm);
+	int temp3 = stoi(rd);
+	temp3 = temp1 | temp2;
+}
+
+void ANDI(string rd, string rs1, string imm)
+{
+	int temp1 = stoi(rs1);
+	int temp2 = stoi(imm);
+	int temp3 = stoi(rd);
+	temp3 = temp1 & temp2;
+}
 string to_binary(string number)
 {
     int num;
