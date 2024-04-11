@@ -5,15 +5,13 @@
 #include <fstream>
 #include <vector>
 #include <map>
-<<<<<<< HEAD
 #include <bitset>
-=======
 #include <algorithm>
 #include <sstream>
->>>>>>> 04a5a6a4b2ddf7731ed6b0d678685407528f8fa6
 using namespace std;
 
-map<string, vector<string>> registers;
+//map<string, vector<string>> registers;
+vector<string> registers;
 // unsigned int pc; // program counter
 // unsigned char memory[];
 string to_binary(string number)
@@ -199,6 +197,7 @@ void LUI(string rd, string imm)
     luistring.erase(0, 12);
     luistring += "000000000000";
 }
+
 void AUIPC(string rd, string imm)
 {
     string auipcstring;
@@ -207,16 +206,19 @@ void AUIPC(string rd, string imm)
     auipcstring += "000000000000";
     ADDI(rd, strbin_to_dec(auipcstring), strbin_to_dec("0"));
 }
+
 int JAL(string rd, string imm, int currentaddress)
 {
     int jumpaddress = currentaddress + stoi(imm);
     return jumpaddress;
 }
+
 int JALR(string ra, string offset)
 {
     int jumpaddress = stoi(offset) + 4 /*+ ra adress */;
     return jumpaddress;
 }
+
 int BEQ(string rs1, string rs2, string imm, int currentaddress)
 {
     int temp1 = stoi(rs1);
@@ -228,6 +230,7 @@ int BEQ(string rs1, string rs2, string imm, int currentaddress)
     }
     return jumpaddress;
 }
+
 int BNE(string rs1, string rs2, string imm, int currentaddress)
 {
     int temp1 = stoi(rs1);
@@ -239,6 +242,7 @@ int BNE(string rs1, string rs2, string imm, int currentaddress)
     }
     return jumpaddress;
 }
+
 int BLT(string rs1, string rs2, string imm, int currentaddress)
 {
     int temp1 = stoi(rs1);
@@ -250,6 +254,7 @@ int BLT(string rs1, string rs2, string imm, int currentaddress)
     }
     return jumpaddress;
 }
+
 int BGE(string rs1, string rs2, string imm, int currentaddress)
 {
     int temp1 = stoi(rs1);
@@ -261,6 +266,7 @@ int BGE(string rs1, string rs2, string imm, int currentaddress)
     }
     return jumpaddress;
 }
+
 int BLTU(string rs1, string rs2, string imm, int currentaddress)
 {
     unsigned int temp1 = stoi(rs1);
@@ -306,10 +312,12 @@ void LH(string rd, string rs1, string offset)
     }
     value = bin_to_dec(binary_value);
 }
+
 void LB(string rd, string rs1, string offset)
 {
-    int destination = stoi(offset) /*+ desination of rd*/;
+    int destination = stoi(offset);
     string binary = to_binary(rd);
+    // int value = stoi(rd) && ((1 << 8 ) - 1);
     int value = bin_to_dec(binary) && ((1 << 8) - 1);
     int msb = 1 << (32 - 1);
     if (value & msb)
@@ -327,7 +335,50 @@ void LB(string rd, string rs1, string offset)
     }
     value = bin_to_dec(binary_value);
 }
-<<<<<<< HEAD
+
+void LW(string rd, string rs1, string offset) 
+{
+    int destination = stoi(offset);
+    int value = stoi(rs1);
+    string binary_value = to_binary(rs1);
+
+    // Extracting the least significant 32 bits of binary_value
+    binary_value = binary_value.substr(binary_value.length() - 32);
+    int msb = binary_value[0] == '1' ? 1 : 0;
+
+    for (int i = binary_value.length(); i < 32; i++)
+        binary_value = to_string(msb) + binary_value;
+
+    value = bin_to_dec(binary_value);
+
+    // register[rd] = value;
+}
+
+void LBU(string rd, string rs1, string offset) 
+{
+   
+}
+
+void LHU(string rd, string rs1, string offset) 
+{
+   
+}
+
+void SB(string rd, string rs1, string offset) 
+{
+
+}
+
+void SH(string rd, string rs1, string offset) 
+{
+
+}
+
+void SW(string rd, string rs1, string offset) 
+{
+
+}
+
 void srli(string rd, string rs1, string rs2) {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
@@ -421,12 +472,11 @@ void AND(string rd, string rs1, string rs2)
     temp3 = temp1 & temp2;
 }
 
-=======
 bool isSpace(char ch)
 {
     return (ch == ' ');
 }
->>>>>>> 04a5a6a4b2ddf7731ed6b0d678685407528f8fa6
+
 int main()
 {
     int address;
