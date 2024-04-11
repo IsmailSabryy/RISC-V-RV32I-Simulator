@@ -5,6 +5,8 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <algorithm>
+#include <sstream>
 using namespace std;
 
 map<string, vector<string>> registers;
@@ -321,7 +323,44 @@ void LB(string rd, string rs1, string offset)
     }
     value = bin_to_dec(binary_value);
 }
+bool isSpace(char ch)
+{
+    return (ch == ' ');
+}
 int main()
 {
+    int address;
+    vector<string> filelines;
+    ifstream reader("riscvcode.txt");
+    string line;
+    while (getline(reader, line))
+    {
+        string inputline;
+        bool found = false;
+        int count = 0;
+        if (!line.empty())
+        {
+            for (int i = 0; i < line.length(); i++)
+            {
+                if (isalpha(line[i]))
+                {
+                    break;
+                }
+
+                count++;
+            }
+            inputline = line.substr(count, line.length());
+            filelines.push_back(inputline);
+        }
+    }
+    auto it = find(filelines.begin(), filelines.end(), "main:");
+    for (auto it2 = it; it2 != filelines.end(); ++it2)
+    {
+        stringstream sep(*it2);
+        string insname;
+        getline(sep, insname, ' ');
+        cout << insname << endl;
+    }
+
     return 0;
 }
