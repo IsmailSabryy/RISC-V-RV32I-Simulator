@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include <bitset>
 using namespace std;
 
 map<string, vector<string>> registers;
@@ -321,6 +322,99 @@ void LB(string rd, string rs1, string offset)
     }
     value = bin_to_dec(binary_value);
 }
+void srli(string rd, string rs1, string rs2) {
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp1 >> temp2;
+}
+
+void slli(string rd, string rs1, string rs2) {
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp1 << temp2;
+}
+
+void srai(string rd, string rs1, string rs2) {
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp1 >> temp2;
+}
+
+void add(string rd, string rs1,string rs2) {
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp2 + temp1;
+}
+
+void sub(string rd, string rs1, string rs2) {
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp1 - temp2;
+}
+
+void sll(string rd, string rs1, string rs2) {
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp1 << temp2;
+}
+
+void slt(string rd, string rs1, string rs2) {
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = (temp1 < temp2) ? 1 : 0;
+}
+
+void sltu(string rd, string rs1, string rs2) {
+    unsigned int temp1 = stoi(rs1);
+    unsigned int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = (temp1 < temp2) ? 1 : 0;
+}
+
+void xor_operation(string rd, string rs1, string rs2) {
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp1 ^ temp2;
+}
+
+void srl(string rd, string rs1, string rs2) {
+    unsigned int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp1 >> temp2;
+}
+
+void sra(string rd, string rs1, string rs2) {
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp1 >> temp2;
+}
+
+void OR(string rd, string rs1, string rs2)
+{
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp1 | temp2;
+}
+
+void AND(string rd, string rs1, string rs2)
+{
+    int temp1 = stoi(rs1);
+    int temp2 = stoi(rs2);
+    int temp3 = stoi(rd);
+    temp3 = temp1 & temp2;
+}
+
 int main()
 {
     return 0;
