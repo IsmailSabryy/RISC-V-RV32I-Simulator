@@ -142,7 +142,7 @@ void SLTI(string rd, string rs1, string imm)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(imm);
-    int temp3 = stoi(rd);
+    int temp3;
     if (temp1 < temp2)
         temp3 = 1;
     else
@@ -153,7 +153,7 @@ void SLTIU(string rd, string rs1, string imm)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(imm);
-    int temp3 = stoi(rd);
+    int temp3;
     if (imm == "1")
     {
         if (temp1 == 0)
@@ -174,24 +174,21 @@ void XORI(string rd, string rs1, string imm)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(imm);
-    int temp3 = stoi(rd);
-    temp3 = temp1 ^ temp2;
+    int temp3 = temp1 ^ temp2;
 }
 
 void ORI(string rd, string rs1, string imm)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(imm);
-    int temp3 = stoi(rd);
-    temp3 = temp1 | temp2;
+    int temp3 = temp1 | temp2;
 }
 
 void ANDI(string rd, string rs1, string imm)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(imm);
-    int temp3 = stoi(rd);
-    temp3 = temp1 & temp2;
+    int temp3 = temp1 & temp2;
 }
 
 void LUI(string rd, string imm)
@@ -385,24 +382,21 @@ void srli(string rd, string rs1, string rs2)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp1 >> temp2;
+    int tempp = temp1 >> temp2;
 }
 
 void slli(string rd, string rs1, string rs2)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp1 << temp2;
+    int temp3 = temp1 << temp2;
 }
 
 void srai(string rd, string rs1, string rs2)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp1 >> temp2;
+    int temp3 = temp1 >> temp2;
 }
 
 void add(string rd, string rs1, string rs2)
@@ -423,72 +417,63 @@ void sub(string rd, string rs1, string rs2)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp1 - temp2;
+    int temp3 = temp1 - temp2;
 }
 
 void sll(string rd, string rs1, string rs2)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp1 << temp2;
+    int temp3 = temp1 << temp2;
 }
 
 void slt(string rd, string rs1, string rs2)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = (temp1 < temp2) ? 1 : 0;
+    int temp3 = (temp1 < temp2) ? 1 : 0;
 }
 
 void sltu(string rd, string rs1, string rs2)
 {
     unsigned int temp1 = stoi(rs1);
     unsigned int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = (temp1 < temp2) ? 1 : 0;
+    int temp3 = (temp1 < temp2) ? 1 : 0;
 }
 
-void xor_operation(string rd, string rs1, string rs2)
+void XOR(string rd, string rs1, string rs2)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp1 ^ temp2;
+    int temp3 = temp1 ^ temp2;
 }
 
 void srl(string rd, string rs1, string rs2)
 {
     unsigned int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp1 >> temp2;
+    int temp3 = temp1 >> temp2;
 }
 
 void sra(string rd, string rs1, string rs2)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp1 >> temp2;
+    int temp3 = temp1 >> temp2;
 }
 
 void OR(string rd, string rs1, string rs2)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp1 | temp2;
+    int temp3 = temp1 | temp2;
 }
 
 void AND(string rd, string rs1, string rs2)
 {
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp1 & temp2;
+    int temp3 = temp1 & temp2;
 }
 
 bool isSpace(char ch)
