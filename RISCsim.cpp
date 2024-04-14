@@ -10,8 +10,8 @@
 #include <sstream>
 using namespace std;
 
-//map<string, vector<string>> registers;
-vector<string> registers;
+// map<string, vector<string>> registers;
+vector<pair<string, string>> reg;
 // unsigned int pc; // program counter
 // unsigned char memory[];
 string to_binary(string number)
@@ -127,11 +127,15 @@ string to_hexa(string number)
 }
 void ADDI(string rd, string rs1, string imm)
 {
-    int temp1 = stoi(rs1);
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(imm);
-    int temp3 = stoi(rd);
-    temp3 = temp2 + temp1;
-    cout << temp3;
+    int temp3 = temp2 + temp1;
+    it_rd->second = to_string(temp3);
+    cout << "New value of " << it_rd->first << ": " << it_rd->second << endl;
 }
 
 void SLTI(string rd, string rs1, string imm)
@@ -192,10 +196,13 @@ void ANDI(string rd, string rs1, string imm)
 
 void LUI(string rd, string imm)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
     string luistring;
     luistring = to_binary(imm);
     luistring.erase(0, 12);
     luistring += "000000000000";
+    it_rd->second = to_string(bin_to_dec(luistring));
 }
 
 void AUIPC(string rd, string imm)
@@ -294,7 +301,7 @@ int BGEU(string rs1, string rs2, string imm, int currentaddress)
 void LH(string rd, string rs1, string offset)
 {
     int destination = stoi(offset) /*+ desination of rd*/;
-    string binary = to_binary(rd);
+    string binary = to_binary(rs1);
     int value = bin_to_dec(binary) && ((1 << 16) - 1);
     int msb = 1 << (32 - 1);
     if (value & msb)
@@ -316,7 +323,7 @@ void LH(string rd, string rs1, string offset)
 void LB(string rd, string rs1, string offset)
 {
     int destination = stoi(offset);
-    string binary = to_binary(rd);
+    string binary = to_binary(rs1);
     // int value = stoi(rd) && ((1 << 8 ) - 1);
     int value = bin_to_dec(binary) && ((1 << 8) - 1);
     int msb = 1 << (32 - 1);
@@ -336,7 +343,7 @@ void LB(string rd, string rs1, string offset)
     value = bin_to_dec(binary_value);
 }
 
-void LW(string rd, string rs1, string offset) 
+void LW(string rd, string rs1, string offset)
 {
     int destination = stoi(offset);
     int value = stoi(rs1);
@@ -354,102 +361,114 @@ void LW(string rd, string rs1, string offset)
     // register[rd] = value;
 }
 
-void LBU(string rd, string rs1, string offset) 
+void LBU(string rd, string rs1, string offset)
 {
-   
 }
 
-void LHU(string rd, string rs1, string offset) 
+void LHU(string rd, string rs1, string offset)
 {
-   
 }
 
-void SB(string rd, string rs1, string offset) 
+void SB(string rd, string rs1, string offset)
 {
-
 }
 
-void SH(string rd, string rs1, string offset) 
+void SH(string rd, string rs1, string offset)
 {
-
 }
 
-void SW(string rd, string rs1, string offset) 
+void SW(string rd, string rs1, string offset)
 {
-
 }
 
-void srli(string rd, string rs1, string rs2) {
+void srli(string rd, string rs1, string rs2)
+{
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = stoi(rd);
     temp3 = temp1 >> temp2;
 }
 
-void slli(string rd, string rs1, string rs2) {
+void slli(string rd, string rs1, string rs2)
+{
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = stoi(rd);
     temp3 = temp1 << temp2;
 }
 
-void srai(string rd, string rs1, string rs2) {
+void srai(string rd, string rs1, string rs2)
+{
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = stoi(rd);
     temp3 = temp1 >> temp2;
 }
 
-void add(string rd, string rs1,string rs2) {
-    int temp1 = stoi(rs1);
-    int temp2 = stoi(rs2);
-    int temp3 = stoi(rd);
-    temp3 = temp2 + temp1;
+void add(string rd, string rs1, string rs2)
+{
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
+    int temp1 = stoi(it_rs1->second);
+    int temp2 = stoi(it_rs2->second);
+    int temp3 = temp2 + temp1;
+    it_rd->second = to_string(temp3);
 }
 
-void sub(string rd, string rs1, string rs2) {
+void sub(string rd, string rs1, string rs2)
+{
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = stoi(rd);
     temp3 = temp1 - temp2;
 }
 
-void sll(string rd, string rs1, string rs2) {
+void sll(string rd, string rs1, string rs2)
+{
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = stoi(rd);
     temp3 = temp1 << temp2;
 }
 
-void slt(string rd, string rs1, string rs2) {
+void slt(string rd, string rs1, string rs2)
+{
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = stoi(rd);
     temp3 = (temp1 < temp2) ? 1 : 0;
 }
 
-void sltu(string rd, string rs1, string rs2) {
+void sltu(string rd, string rs1, string rs2)
+{
     unsigned int temp1 = stoi(rs1);
     unsigned int temp2 = stoi(rs2);
     int temp3 = stoi(rd);
     temp3 = (temp1 < temp2) ? 1 : 0;
 }
 
-void xor_operation(string rd, string rs1, string rs2) {
+void xor_operation(string rd, string rs1, string rs2)
+{
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = stoi(rd);
     temp3 = temp1 ^ temp2;
 }
 
-void srl(string rd, string rs1, string rs2) {
+void srl(string rd, string rs1, string rs2)
+{
     unsigned int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = stoi(rd);
     temp3 = temp1 >> temp2;
 }
 
-void sra(string rd, string rs1, string rs2) {
+void sra(string rd, string rs1, string rs2)
+{
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = stoi(rd);
@@ -482,6 +501,16 @@ int main()
     int address;
     vector<string> filelines;
     ifstream reader("riscvcode.txt");
+    ifstream registerstate("registerstate.txt");
+    string linereg;
+    while (getline(registerstate, linereg))
+    {
+        stringstream str(linereg);
+        string linesep1, linesep2;
+        getline(str, linesep1, ',');
+        getline(str, linesep2);
+        reg.push_back(make_pair(linesep1, linesep2));
+    }
     string line;
     while (getline(reader, line))
     {
@@ -507,9 +536,33 @@ int main()
     for (auto it2 = it; it2 != filelines.end(); ++it2)
     {
         stringstream sep(*it2);
-        string insname;
+        string insname, RD, RS1, RS2, IMM, OFF;
         getline(sep, insname, ' ');
-        cout << insname << endl;
+
+        if (insname == "ADDI" || insname == "addi")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM);
+            ADDI(RD, RS1, IMM);
+        }
+        else if (insname == "ADD" || insname == "add")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            add(RD, RS1, RS2);
+        }
+        else if (insname == "LUI" || insname == "lui")
+        {
+            getline(sep, RD, ',');
+            getline(sep, IMM);
+            LUI(RD, IMM);
+        }
+    }
+    for (pair<string, string> linee : reg)
+    {
+        cout << linee.first << " " << linee.second << endl;
     }
 
     return 0;
