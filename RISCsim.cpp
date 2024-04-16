@@ -135,7 +135,7 @@ void ADDI(string rd, string rs1, string imm)
     int temp2 = stoi(imm);
     int temp3 = temp2 + temp1;
     it_rd->second = to_string(temp3);
-    cout << "New value of " << it_rd->first << ": " << it_rd->second << endl;
+    //cout << "New value of " << it_rd->first << ": " << it_rd->second << endl;
 }
 
 void SLTI(string rd, string rs1, string imm)
@@ -186,9 +186,14 @@ void ORI(string rd, string rs1, string imm)
 
 void ANDI(string rd, string rs1, string imm)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(imm);
     int temp3 = temp1 & temp2;
+    it_rd->second = to_string(temp3);
 }
 
 void LUI(string rd, string imm)
@@ -380,23 +385,44 @@ void SW(string rd, string rs1, string offset)
 
 void srli(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
-    int tempp = temp1 >> temp2;
+    int temp3 = temp1 >> temp2;
+    it_rd->second = to_string(temp3);
 }
 
 void slli(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = temp1 << temp2;
+    it_rd->second = to_string(temp3);
 }
 
 void srai(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = temp1 >> temp2;
+    it_rd->second = to_string(temp3);
 }
 
 void add(string rd, string rs1, string rs2)
@@ -415,65 +441,128 @@ void add(string rd, string rs1, string rs2)
 
 void sub(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = temp1 - temp2;
+    it_rd->second = to_string(temp3);
 }
 
 void sll(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = temp1 << temp2;
+    it_rd->second = to_string(temp3);
 }
 
 void slt(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = (temp1 < temp2) ? 1 : 0;
+    it_rd->second = to_string(temp3);
 }
 
 void sltu(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     unsigned int temp1 = stoi(rs1);
     unsigned int temp2 = stoi(rs2);
     int temp3 = (temp1 < temp2) ? 1 : 0;
+    it_rd->second = to_string(temp3);
 }
 
 void XOR(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = temp1 ^ temp2;
+    it_rd->second = to_string(temp3);
 }
 
 void srl(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     unsigned int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = temp1 >> temp2;
+    it_rd->second = to_string(temp3);
 }
 
 void sra(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = temp1 >> temp2;
+    it_rd->second = to_string(temp3);
 }
 
 void OR(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = temp1 | temp2;
+    it_rd->second = to_string(temp3);
 }
 
 void AND(string rd, string rs1, string rs2)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs2; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(rs2);
     int temp3 = temp1 & temp2;
+    it_rd->second = to_string(temp3);
 }
 
 bool isSpace(char ch)
