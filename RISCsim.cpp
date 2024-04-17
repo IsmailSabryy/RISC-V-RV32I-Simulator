@@ -140,6 +140,10 @@ void ADDI(string rd, string rs1, string imm)
 
 void SLTI(string rd, string rs1, string imm)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(imm);
     int temp3;
@@ -147,10 +151,15 @@ void SLTI(string rd, string rs1, string imm)
         temp3 = 1;
     else
         temp3 = 0;
+    it_rd->second = to_string(temp3);
 }
 
 void SLTIU(string rd, string rs1, string imm)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(imm);
     int temp3;
@@ -168,20 +177,31 @@ void SLTIU(string rd, string rs1, string imm)
         else
             temp3 = 0;
     }
+    it_rd->second = to_string(temp3); 
 }
 
 void XORI(string rd, string rs1, string imm)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(imm);
     int temp3 = temp1 ^ temp2;
+    it_rd->second = to_string(temp3); 
 }
 
 void ORI(string rd, string rs1, string imm)
 {
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
+        { return p.first == rs1; });
     int temp1 = stoi(rs1);
     int temp2 = stoi(imm);
     int temp3 = temp1 | temp2;
+    it_rd->second = to_string(temp3); 
 }
 
 void ANDI(string rd, string rs1, string imm)
@@ -199,7 +219,7 @@ void ANDI(string rd, string rs1, string imm)
 void LUI(string rd, string imm)
 {
     auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                         { return p.first == rd; });
+        { return p.first == rd; });
     string luistring;
     luistring = to_binary(imm);
     luistring.erase(0, 12);
@@ -218,7 +238,7 @@ void AUIPC(string rd, string imm)
 
 int JAL(string rd, string imm, int currentaddress)
 {
-    int jumpaddress = currentaddress + stoi(imm);
+    int jumpaddress = currentaddress + stoi(imm);       
     return jumpaddress;
 }
 
@@ -569,6 +589,13 @@ bool isSpace(char ch)
 {
     return (ch == ' ');
 }
+bool isX0 (string rd)
+{
+    if (rd == "X0") {
+        cout << "Invalid input, rd cannot be Register 0" << endl;
+        
+    }
+}
 
 int main()
 {
@@ -627,12 +654,76 @@ int main()
             getline(sep, RS2);
             add(RD, RS1, RS2);
         }
+        else if (insname == "SUB" || insname == "sub")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            sub(RD, RS1, RS2); 
         else if (insname == "LUI" || insname == "lui")
         {
             getline(sep, RD, ',');
             getline(sep, IMM);
             LUI(RD, IMM);
         }
+        else if (insname == "SLTI" || insname == "slti")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM); 
+            SLTI(RD, RS1, IMM);
+        }
+        else if (insname == "SLTIU" || insname == "sltiu")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM);
+            SLTIU(RD, RS1, IMM);
+        }
+        else if (insname == "ORI" || insname == "ori")
+        {
+            getline(sep, RD, ','); 
+            getline(sep, RS1, ','); 
+            getline(sep, IMM); 
+            ORI(RD, RS1, IMM); 
+        }
+        else if (insname == "OR" || insname == "or")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            OR(RD, RS1, RS2);
+        }
+        else if (insname == "AND" || insname == "and")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            AND(RD, RS1, RS2);
+        }
+        else if (insname == "ANDI" || insname == "andi")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM);
+            ANDI(RD, RS1, IMM);
+        }
+        else if (insname == "XORI" || insname == "xori")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM);
+            XORI(RD, RS1, IMM);
+        }
+        else if (insname == "XOR" || insname == "xor")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            XOR(RD, RS1, RS2);
+        }
+
+
     }
     for (pair<string, string> linee : reg)
     {
