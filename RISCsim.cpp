@@ -135,15 +135,15 @@ void ADDI(string rd, string rs1, string imm)
     int temp2 = stoi(imm);
     int temp3 = temp2 + temp1;
     it_rd->second = to_string(temp3);
-    //cout << "New value of " << it_rd->first << ": " << it_rd->second << endl;
+    // cout << "New value of " << it_rd->first << ": " << it_rd->second << endl;
 }
 
 void SLTI(string rd, string rs1, string imm)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(imm);
     int temp3;
@@ -156,10 +156,10 @@ void SLTI(string rd, string rs1, string imm)
 
 void SLTIU(string rd, string rs1, string imm)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(imm);
     int temp3;
@@ -177,39 +177,39 @@ void SLTIU(string rd, string rs1, string imm)
         else
             temp3 = 0;
     }
-    it_rd->second = to_string(temp3); 
+    it_rd->second = to_string(temp3);
 }
 
 void XORI(string rd, string rs1, string imm)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(imm);
     int temp3 = temp1 ^ temp2;
-    it_rd->second = to_string(temp3); 
+    it_rd->second = to_string(temp3);
 }
 
 void ORI(string rd, string rs1, string imm)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(imm);
     int temp3 = temp1 | temp2;
-    it_rd->second = to_string(temp3); 
+    it_rd->second = to_string(temp3);
 }
 
 void ANDI(string rd, string rs1, string imm)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(imm);
     int temp3 = temp1 & temp2;
@@ -219,7 +219,7 @@ void ANDI(string rd, string rs1, string imm)
 void LUI(string rd, string imm)
 {
     auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-        { return p.first == rd; });
+                         { return p.first == rd; });
     string luistring;
     luistring = to_binary(imm);
     luistring.erase(0, 12);
@@ -238,7 +238,7 @@ void AUIPC(string rd, string imm)
 
 int JAL(string rd, string imm, int currentaddress)
 {
-    int jumpaddress = currentaddress + stoi(imm);       
+    int jumpaddress = currentaddress + stoi(imm);
     return jumpaddress;
 }
 
@@ -250,12 +250,11 @@ int JALR(string ra, string offset)
 
 int BEQ(string rs1, string rs2, string imm, int currentaddress)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int jumpaddress = currentaddress;
@@ -269,10 +268,10 @@ int BEQ(string rs1, string rs2, string imm, int currentaddress)
 int BNE(string rs1, string rs2, string imm, int currentaddress)
 {
 
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int jumpaddress = currentaddress;
@@ -286,11 +285,11 @@ int BNE(string rs1, string rs2, string imm, int currentaddress)
 int BLT(string rs1, string rs2, string imm, int currentaddress)
 {
 
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
-    int temp1 = stoi(it_rs1->second); 
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
+    int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int jumpaddress = currentaddress;
     if (temp1 < temp2)
@@ -302,10 +301,10 @@ int BLT(string rs1, string rs2, string imm, int currentaddress)
 
 int BGE(string rs1, string rs2, string imm, int currentaddress)
 {
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int jumpaddress = currentaddress;
@@ -319,10 +318,10 @@ int BGE(string rs1, string rs2, string imm, int currentaddress)
 int BLTU(string rs1, string rs2, string imm, int currentaddress)
 {
 
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     unsigned int temp1 = stoi(it_rs1->second);
     unsigned int temp2 = stoi(it_rs2->second);
     int jumpaddress = currentaddress;
@@ -336,10 +335,10 @@ int BLTU(string rs1, string rs2, string imm, int currentaddress)
 int BGEU(string rs1, string rs2, string imm, int currentaddress)
 {
 
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     unsigned int temp1 = stoi(it_rs1->second);
     unsigned int temp2 = stoi(it_rs2->second);
     int jumpaddress = currentaddress;
@@ -435,12 +434,12 @@ void SW(string rd, string rs1, string offset)
 
 void srli(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = temp1 >> temp2;
@@ -449,12 +448,12 @@ void srli(string rd, string rs1, string rs2)
 
 void slli(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = temp1 << temp2;
@@ -463,12 +462,12 @@ void slli(string rd, string rs1, string rs2)
 
 void srai(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = temp1 >> temp2;
@@ -491,12 +490,12 @@ void add(string rd, string rs1, string rs2)
 
 void sub(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = temp1 - temp2;
@@ -505,12 +504,12 @@ void sub(string rd, string rs1, string rs2)
 
 void sll(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = temp1 << temp2;
@@ -519,12 +518,12 @@ void sll(string rd, string rs1, string rs2)
 
 void slt(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = (temp1 < temp2) ? 1 : 0;
@@ -533,12 +532,12 @@ void slt(string rd, string rs1, string rs2)
 
 void sltu(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     unsigned int temp1 = stoi(it_rs1->second);
     unsigned int temp2 = stoi(it_rs2->second);
     int temp3 = (temp1 < temp2) ? 1 : 0;
@@ -547,12 +546,12 @@ void sltu(string rd, string rs1, string rs2)
 
 void XOR(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = temp1 ^ temp2;
@@ -561,12 +560,12 @@ void XOR(string rd, string rs1, string rs2)
 
 void srl(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     unsigned int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = temp1 >> temp2;
@@ -575,12 +574,12 @@ void srl(string rd, string rs1, string rs2)
 
 void sra(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = temp1 >> temp2;
@@ -589,12 +588,12 @@ void sra(string rd, string rs1, string rs2)
 
 void OR(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = temp1 | temp2;
@@ -603,12 +602,12 @@ void OR(string rd, string rs1, string rs2)
 
 void AND(string rd, string rs1, string rs2)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rs2; });
+    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                         { return p.first == rd; });
+    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs1; });
+    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                          { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
     int temp3 = temp1 & temp2;
@@ -619,11 +618,12 @@ bool isSpace(char ch)
 {
     return (ch == ' ');
 }
-bool isX0 (string rd)
+bool isX0(string rd)
 {
-    if (rd == "X0") {
+    if (rd == "X0")
+    {
         cout << "Invalid input, rd cannot be Register 0" << endl;
-        
+        return true;
     }
 }
 
@@ -675,86 +675,371 @@ int main()
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
             getline(sep, IMM);
-            ADDI(RD, RS1, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                ADDI(RD, RS1, IMM);
+            }
         }
         else if (insname == "ADD" || insname == "add")
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
             getline(sep, RS2);
-            add(RD, RS1, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                add(RD, RS1, RS2);
+            }
         }
         else if (insname == "SUB" || insname == "sub")
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
             getline(sep, RS2);
-            sub(RD, RS1, RS2); 
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                sub(RD, RS1, RS2);
+            }
+        }
         else if (insname == "LUI" || insname == "lui")
         {
             getline(sep, RD, ',');
             getline(sep, IMM);
-            LUI(RD, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                LUI(RD, IMM);
+            }
         }
         else if (insname == "SLTI" || insname == "slti")
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
-            getline(sep, IMM); 
-            SLTI(RD, RS1, IMM);
+            getline(sep, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                SLTI(RD, RS1, IMM);
+            }
         }
         else if (insname == "SLTIU" || insname == "sltiu")
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
             getline(sep, IMM);
-            SLTIU(RD, RS1, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                SLTIU(RD, RS1, IMM);
+            }
         }
         else if (insname == "ORI" || insname == "ori")
         {
-            getline(sep, RD, ','); 
-            getline(sep, RS1, ','); 
-            getline(sep, IMM); 
-            ORI(RD, RS1, IMM); 
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                ORI(RD, RS1, IMM);
+            }
         }
         else if (insname == "OR" || insname == "or")
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
             getline(sep, RS2);
-            OR(RD, RS1, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                OR(RD, RS1, RS2);
+            }
         }
         else if (insname == "AND" || insname == "and")
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
             getline(sep, RS2);
-            AND(RD, RS1, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                AND(RD, RS1, RS2);
+            }
         }
         else if (insname == "ANDI" || insname == "andi")
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
             getline(sep, IMM);
-            ANDI(RD, RS1, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                ANDI(RD, RS1, IMM);
+            }
         }
         else if (insname == "XORI" || insname == "xori")
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
             getline(sep, IMM);
-            XORI(RD, RS1, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                XORI(RD, RS1, IMM);
+            }
         }
         else if (insname == "XOR" || insname == "xor")
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
             getline(sep, RS2);
-            XOR(RD, RS1, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                XOR(RD, RS1, RS2);
+            }
         }
-       /* else if (insname == "BNE" || insname == "bne")
-
-    }*/
+        else if (insname == "BNE" || insname == "bne")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                // bne();
+            }
+        }
+        else if (insname == "BEQ" || insname == "beq")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                // beq();
+            }
+        }
+        else if (insname == "BLT" || insname == "blt")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                // blt();
+            }
+        }
+        else if (insname == "BGE" || insname == "bge")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                // bge();
+            }
+        }
+        else if (insname == "BLTU" || insname == "blt")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, IMM);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                // bltu();
+            }
+        }
+        else if (insname == "SRLI" || insname == "srli")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                srli(RD, RS1, RS2);
+            }
+        }
+        else if (insname == "SLLI" || insname == "slli")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                slli(RD, RS1, RS2);
+            }
+        }
+        else if (insname == "SRAI" || insname == "srai")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                srai(RD, RS1, RS2);
+            }
+        }
+        else if (insname == "SLL" || insname == "sll")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                sll(RD, RS1, RS2);
+            }
+        }
+        else if (insname == "SLT" || insname == "slt")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                slt(RD, RS1, RS2);
+            }
+        }
+        else if (insname == "SLTU" || insname == "sltu")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                sltu(RD, RS1, RS2);
+            }
+        }
+        else if (insname == "SRL" || insname == "srl")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                srl(RD, RS1, RS2);
+            }
+        }
+        else if (insname == "SRA" || insname == "sra")
+        {
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, RS2);
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                sra(RD, RS1, RS2);
+            }
+        }
+        // else if (insname == "LW" || insname == "lw"){}
+        // else if (insname == "LH" || insname == "lh"){}
+        // else if (insname == "LB" || insname == "lb"){}
+        // else if (insname == "LBU" || insname == "lbu"){}
+        // else if (insname == "LHU" || insname == "lhu"){}
+        // else if (insname == "SB" || insname == "sb"){}
+        // else if (insname == "SH" || insname == "sh"){}
+        // else if (insname == "SW" || insname == "sw"){}
+        // else if (insname == "LUI" || insname == "lui"){}
+        // else if (insname == "AUIPC" || insname == "auipc"){}
+        else if (insname == "FENCE" || insname == "ECALL" || insname == "EBREAK")
+        {
+            cout << " Halting Instruction Detected" << endl;
+            return 0;
+        }
+        else if (insname == "fence" || insname == "ecall" || insname == "ebreak")
+        {
+            cout << " Exit instruction entered, aborting process" << endl;
+            return 0;
+        }
+    }
     for (pair<string, string> linee : reg)
     {
         cout << linee.first << " " << linee.second << endl;
