@@ -268,8 +268,7 @@ int BEQ(string rs1, string rs2, string imm, int currentaddress)
 
 int BNE(string rs1, string rs2, string imm, int currentaddress)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
+
     auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
         { return p.first == rs1; });
     auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
@@ -286,8 +285,7 @@ int BNE(string rs1, string rs2, string imm, int currentaddress)
 
 int BLT(string rs1, string rs2, string imm, int currentaddress)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
+
     auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
         { return p.first == rs1; });
     auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
@@ -304,8 +302,6 @@ int BLT(string rs1, string rs2, string imm, int currentaddress)
 
 int BGE(string rs1, string rs2, string imm, int currentaddress)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
     auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
         { return p.first == rs1; });
     auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
@@ -322,8 +318,7 @@ int BGE(string rs1, string rs2, string imm, int currentaddress)
 
 int BLTU(string rs1, string rs2, string imm, int currentaddress)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
+
     auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
         { return p.first == rs1; });
     auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
@@ -340,8 +335,7 @@ int BLTU(string rs1, string rs2, string imm, int currentaddress)
 
 int BGEU(string rs1, string rs2, string imm, int currentaddress)
 {
-    auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
-        { return p.first == rd; });
+
     auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
         { return p.first == rs1; });
     auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string>& p)
@@ -758,9 +752,9 @@ int main()
             getline(sep, RS2);
             XOR(RD, RS1, RS2);
         }
+       /* else if (insname == "BNE" || insname == "bne")
 
-
-    }
+    }*/
     for (pair<string, string> linee : reg)
     {
         cout << linee.first << " " << linee.second << endl;
