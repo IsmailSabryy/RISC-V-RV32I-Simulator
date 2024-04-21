@@ -1,4 +1,4 @@
 main:
        LUI a5,8
-       ADDI a0,a1,7 
-       ADD a2,a0,a5
+       ADDI a4,a1,7 
+       ADDI a2,a4,8

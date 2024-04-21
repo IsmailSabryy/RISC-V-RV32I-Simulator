@@ -12,6 +12,9 @@ using namespace std;
 
 // map<string, vector<string>> registers;
 vector<pair<string, string>> reg;
+map<int, string> fileaddresses;
+map<int, string> codeaddresses;
+
 // unsigned int pc; // program counter
 // unsigned char memory[];
 string to_binary(string number)
@@ -620,19 +623,24 @@ bool isSpace(char ch)
 }
 bool isX0(string rd)
 {
-    if (rd == "X0")
+    if (rd == "zero")
     {
-        cout << "Invalid input, rd cannot be Register 0" << endl;
         return true;
     }
+    else
+        return false;
 }
 
 int main()
 {
     int address;
+    cout << " Input starting adress" << endl;
+    cin >> address;
+
     vector<string> filelines;
     ifstream reader("riscvcode.txt");
     ifstream registerstate("registerstate.txt");
+    ifstream filead("ad.txt");
     string linereg;
     while (getline(registerstate, linereg))
     {
@@ -641,6 +649,15 @@ int main()
         getline(str, linesep1, ',');
         getline(str, linesep2);
         reg.push_back(make_pair(linesep1, linesep2));
+    }
+    string linead;
+    while (getline(filead, linead))
+    {
+        stringstream str(linead);
+        string linesep1, linesep2;
+        getline(str, linesep1, ',');
+        getline(str, linesep2);
+        fileaddresses[stoi(linesep1)] = linesep2;
     }
     string line;
     while (getline(reader, line))
@@ -663,13 +680,39 @@ int main()
             filelines.push_back(inputline);
         }
     }
-    auto it = find(filelines.begin(), filelines.end(), "main:");
-    for (auto it2 = it; it2 != filelines.end(); ++it2)
+    auto it_complete = find(filelines.begin(), filelines.end(), "main:");
+    auto itfiner = fileaddresses.begin();
+    if (it_complete != filelines.end())
     {
-        stringstream sep(*it2);
+        it_complete++;
+        while (it_complete != filelines.end() && itfiner != fileaddresses.end())
+        {
+            if (itfiner->first == address)
+            {
+                string s = *it_complete;
+                codeaddresses[address] = s;
+                address += 4;
+                it_complete++;
+                itfiner++;
+            }
+            else
+            {
+                itfiner++;
+                it_complete++;
+            }
+        }
+    }
+    for (const auto &pair : codeaddresses)
+    {
+        cout << pair.first << ": " << pair.second << endl;
+    }
+    auto it = codeaddresses.begin();
+    while (it != codeaddresses.end())
+    {
+        stringstream sep(it->second);
         string insname, RD, RS1, RS2, IMM, OFF;
         getline(sep, insname, ' ');
-
+        address = it->first + 4;
         if (insname == "ADDI" || insname == "addi")
         {
             getline(sep, RD, ',');
@@ -677,12 +720,10 @@ int main()
             getline(sep, IMM);
             if (isX0(RD))
             {
-                return 0;
+                break;
             }
-            else
-            {
-                ADDI(RD, RS1, IMM);
-            }
+
+            ADDI(RD, RS1, IMM);
         }
         else if (insname == "ADD" || insname == "add")
         {
@@ -691,12 +732,9 @@ int main()
             getline(sep, RS2);
             if (isX0(RD))
             {
-                return 0;
+                break;
             }
-            else
-            {
-                add(RD, RS1, RS2);
-            }
+            add(RD, RS1, RS2);
         }
         else if (insname == "SUB" || insname == "sub")
         {
@@ -718,12 +756,9 @@ int main()
             getline(sep, IMM);
             if (isX0(RD))
             {
-                return 0;
+                break;
             }
-            else
-            {
-                LUI(RD, IMM);
-            }
+            LUI(RD, IMM);
         }
         else if (insname == "SLTI" || insname == "slti")
         {
@@ -1039,6 +1074,7 @@ int main()
             cout << " Exit instruction entered, aborting process" << endl;
             return 0;
         }
+        it = codeaddresses.find(address);
     }
     for (pair<string, string> linee : reg)
     {
