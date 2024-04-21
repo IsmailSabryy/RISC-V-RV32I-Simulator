@@ -8,6 +8,7 @@
 #include <bitset>
 #include <algorithm>
 #include <sstream>
+#include <cmath>
 using namespace std;
 
 // map<string, vector<string>> registers;
@@ -17,6 +18,77 @@ map<int, string> codeaddresses;
 
 // unsigned int pc; // program counter
 // unsigned char memory[];
+string dectobinary(const string& numStr) // using twos complement
+{
+    int num = stoi(numStr);
+    int numbits = (int)log2(abs(num)) + 1; // to get the number of bits for number
+    string binary = "";
+
+    if (num < 0) // when dealing with negative nums. use two's complement
+    {
+        num = -num;
+        for (int i = 0; i < numbits; ++i)
+        {
+            if (num % 2 == 0)
+                binary = "0" + binary;
+            else
+                binary = "1" + binary;
+            num /= 2;
+        }
+        for (char& c : binary)
+        {
+            if (c == '0')
+                c = '1';
+            else
+                c = '0';
+        }
+        int carry = 1;
+        for (int i = numbits - 1; i >= 0; --i)
+        {
+            if (binary[i] == '1' && carry == 1) {
+                binary[i] = '0';
+            } else if (binary[i] == '0' && carry == 1) {
+                binary[i] = '1';
+                carry = 0;
+            }
+        }
+    } else {
+        for (int i = 0; i < numbits; ++i)
+        {
+            if (num % 2 == 0)
+                binary = "0" + binary;
+            else
+                binary = "1" + binary;
+            num /= 2;
+        }
+    }
+    return binary;
+}
+string dectohex(const string& numstr)
+{
+    string binary = dectobinary(numstr); // convert the num to binary using the previous function
+    int numbits = binary.length();
+
+    while (binary.length() % 4 != 0)// checks if the length of binary string is divisble by 4 or not. if not then append zeros.
+    {
+        binary = "0" + binary;
+    }
+    string hex = "";
+    for (int i = 0; i < numbits; i += 4)
+    {
+        string nibble = binary.substr(i, 4);
+        int decimal = stoi(nibble, nullptr, 2); // Convert binary to decimal
+        char hexdigit;
+        if (decimal < 10)
+        {
+            hexdigit = '0' + decimal;
+        } else {
+            hexdigit = 'A' + (decimal - 10);
+        }
+        hex += hexdigit;
+    }
+    return hex;
+}
 string to_binary(string number)
 {
     int num;
