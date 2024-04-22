@@ -430,24 +430,35 @@ int BGEU(string rs1, string rs2, string imm, int currentaddress)
 
 void LH(string rd, string rs1, string offset)
 {
-    /*int destination = stoi(offset);
-    string binary = to_binary(rs1);
-    int value = bin_to_dec(binary) && ((1 << 16) - 1);
-    int msb = 1 << (32 - 1);
-    if (value & msb)
+    int RsValue;
+    int value;
+    for (auto i : reg)
     {
-        msb = 1;
+        if (i.first == rs1)
+        {
+            RsValue = stoi(i.second);
+            break;
+        }
     }
-    else
+
+    int RdValue = RsValue + stoi(offset);
+
+    for (auto i : codeaddresses)
     {
-        msb = 0;
+        if (i.first == RdValue)
+        {
+            value = stoi(i.second);
+            break;
+        }
     }
-    string binary_value;
-    for (int i = 0; i < 32 - to_binary(to_string(value)).size(); i++)
+    for (auto i : reg)
     {
-        binary_value += to_string(msb);
+        if (i.first == rd)
+        {
+            i.second = to_string(value);
+            break;
+        }
     }
-    value = bin_to_dec(binary_value);*/
 }
 
 void LB(string rd, string rs1, string offset)
@@ -521,8 +532,32 @@ void SH(string rd, string rs1, string offset)
 {
 }
 
-void SW(string rd, string rs1, string offset)
+void SW(string rd, string rs1, string offset) // SW ra,0(sp) rs1 = ra ; sp = rd
 {
+    // ra contains int value, sp contains base address. 1) Add the source base address to the offset to get the effective address.
+    //  2) store the value found in ra into the effective address calculated.
+    int dValue;
+    int effectiveAdd;
+
+    for (auto i : reg)
+    {
+        if (i.first == rd)
+        {
+            dValue = stoi(i.second);
+            break;
+        }
+    }
+    effectiveAdd = dValue + stoi(offset);
+    cout << "Effective Add is " << effectiveAdd << endl;
+    for (auto i : codeaddresses)
+    {
+        if (i.first == effectiveAdd)
+        {
+            i.second = rs1;
+            cout << "Value in Effective address is " << i.second << endl;
+            break;
+        }
+    }
 }
 
 void srli(string rd, string rs1, string rs2)
@@ -1149,14 +1184,14 @@ int main()
             getline(sep, RD, ',');
             getline(sep, OFF, '(');
             getline(sep, RS1, ')');
-            cout << "OFFset is " << OFF << endl;
+            // cout << "OFFset is " << OFF << endl;
             if (isX0(RD))
             {
                 return 0;
             }
             else
             {
-                
+
                 LW(RD, RS1, OFF);
             }
         }
@@ -1166,7 +1201,26 @@ int main()
         // else if (insname == "LHU" || insname == "lhu"){}
         // else if (insname == "SB" || insname == "sb"){}
         // else if (insname == "SH" || insname == "sh"){}
-        // else if (insname == "SW" || insname == "sw"){}
+        else if (insname == "SW" || insname == "sw")
+        {
+            getline(sep, RD, ',');
+            getline(sep, OFF, '(');
+            getline(sep, RS1, ')');
+            // cout << "OFFset is " << OFF << endl;
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+
+                SW(RD, RS1, OFF);
+                for (pair<string, string> linee : reg)
+                {
+                    cout << linee.first << " " << linee.second << endl;
+                }
+            }
+        }
         // else if (insname == "LUI" || insname == "lui"){}
         // else if (insname == "AUIPC" || insname == "auipc"){}
         else if (insname == "FENCE" || insname == "ECALL" || insname == "EBREAK")
