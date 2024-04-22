@@ -11,14 +11,11 @@
 #include <cmath>
 using namespace std;
 
-// map<string, vector<string>> registers;
 vector<pair<string, string>> reg;
 map<int, string> fileaddresses;
 map<int, string> codeaddresses;
 
-// unsigned int pc; // program counter
-// unsigned char memory[];
-string dectobinary(const string& numStr) // using twos complement
+string dectobinary(const string &numStr) // using twos complement
 {
     int num = stoi(numStr);
     int numbits = (int)log2(abs(num)) + 1; // to get the number of bits for number
@@ -35,7 +32,7 @@ string dectobinary(const string& numStr) // using twos complement
                 binary = "1" + binary;
             num /= 2;
         }
-        for (char& c : binary)
+        for (char &c : binary)
         {
             if (c == '0')
                 c = '1';
@@ -45,14 +42,19 @@ string dectobinary(const string& numStr) // using twos complement
         int carry = 1;
         for (int i = numbits - 1; i >= 0; --i)
         {
-            if (binary[i] == '1' && carry == 1) {
+            if (binary[i] == '1' && carry == 1)
+            {
                 binary[i] = '0';
-            } else if (binary[i] == '0' && carry == 1) {
+            }
+            else if (binary[i] == '0' && carry == 1)
+            {
                 binary[i] = '1';
                 carry = 0;
             }
         }
-    } else {
+    }
+    else
+    {
         for (int i = 0; i < numbits; ++i)
         {
             if (num % 2 == 0)
@@ -64,12 +66,12 @@ string dectobinary(const string& numStr) // using twos complement
     }
     return binary;
 }
-string dectohex(const string& numstr)
+string dectohex(const string &numstr)
 {
     string binary = dectobinary(numstr); // convert the num to binary using the previous function
     int numbits = binary.length();
 
-    while (binary.length() % 4 != 0)// checks if the length of binary string is divisble by 4 or not. if not then append zeros.
+    while (binary.length() % 4 != 0) // checks if the length of binary string is divisble by 4 or not. if not then append zeros.
     {
         binary = "0" + binary;
     }
@@ -82,7 +84,9 @@ string dectohex(const string& numstr)
         if (decimal < 10)
         {
             hexdigit = '0' + decimal;
-        } else {
+        }
+        else
+        {
             hexdigit = 'A' + (decimal - 10);
         }
         hex += hexdigit;
@@ -426,7 +430,7 @@ int BGEU(string rs1, string rs2, string imm, int currentaddress)
 
 void LH(string rd, string rs1, string offset)
 {
-    int destination = stoi(offset) /*+ desination of rd*/;
+    /*int destination = stoi(offset);
     string binary = to_binary(rs1);
     int value = bin_to_dec(binary) && ((1 << 16) - 1);
     int msb = 1 << (32 - 1);
@@ -443,12 +447,12 @@ void LH(string rd, string rs1, string offset)
     {
         binary_value += to_string(msb);
     }
-    value = bin_to_dec(binary_value);
+    value = bin_to_dec(binary_value);*/
 }
 
 void LB(string rd, string rs1, string offset)
 {
-    int destination = stoi(offset);
+    /*int destination = stoi(offset);
     string binary = to_binary(rs1);
     // int value = stoi(rd) && ((1 << 8 ) - 1);
     int value = bin_to_dec(binary) && ((1 << 8) - 1);
@@ -466,25 +470,39 @@ void LB(string rd, string rs1, string offset)
     {
         binary_value += to_string(msb);
     }
-    value = bin_to_dec(binary_value);
+    value = bin_to_dec(binary_value);*/
 }
 
 void LW(string rd, string rs1, string offset)
 {
-    int destination = stoi(offset);
-    int value = stoi(rs1);
-    string binary_value = to_binary(rs1);
+    int RsValue;
+    int value;
+    for (auto i : reg)
+    {
+        if (i.first == rs1)
+        {
+            RsValue = stoi(i.second);
+            break;
+        }
+    }
+    int RdValue = RsValue + stoi(offset);
 
-    // Extracting the least significant 32 bits of binary_value
-    binary_value = binary_value.substr(binary_value.length() - 32);
-    int msb = binary_value[0] == '1' ? 1 : 0;
-
-    for (int i = binary_value.length(); i < 32; i++)
-        binary_value = to_string(msb) + binary_value;
-
-    value = bin_to_dec(binary_value);
-
-    // register[rd] = value;
+    for (auto i : codeaddresses)
+    {
+        if (i.first == RdValue)
+        {
+            value = stoi(i.second);
+            break;
+        }
+    }
+    for (auto i : reg)
+    {
+        if (i.first == rd)
+        {
+            i.second = to_string(value);
+            break;
+        }
+    }
 }
 
 void LBU(string rd, string rs1, string offset)
@@ -1126,7 +1144,22 @@ int main()
                 sra(RD, RS1, RS2);
             }
         }
-        // else if (insname == "LW" || insname == "lw"){}
+        else if (insname == "LW" || insname == "lw")
+        {
+            getline(sep, RD, ',');
+            getline(sep, OFF, '(');
+            getline(sep, RS1, ')');
+            cout << "OFFset is " << OFF << endl;
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+                
+                LW(RD, RS1, OFF);
+            }
+        }
         // else if (insname == "LH" || insname == "lh"){}
         // else if (insname == "LB" || insname == "lb"){}
         // else if (insname == "LBU" || insname == "lbu"){}
@@ -1138,7 +1171,7 @@ int main()
         // else if (insname == "AUIPC" || insname == "auipc"){}
         else if (insname == "FENCE" || insname == "ECALL" || insname == "EBREAK")
         {
-            cout << " Halting Instruction Detected" << endl;
+            cout << " Exit instruction entered, aborting process" << endl;
             return 0;
         }
         else if (insname == "fence" || insname == "ecall" || insname == "ebreak")
@@ -1146,6 +1179,7 @@ int main()
             cout << " Exit instruction entered, aborting process" << endl;
             return 0;
         }
+
         it = codeaddresses.find(address);
     }
     for (pair<string, string> linee : reg)

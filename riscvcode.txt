@@ -1,4 +1,6 @@
 main:
        LUI a5,8
        ADDI a4,a1,7 
-       ADDI a2,a4,8
+       ADDI a3,a4,8
+	LW a2,0(a3)
+	   
