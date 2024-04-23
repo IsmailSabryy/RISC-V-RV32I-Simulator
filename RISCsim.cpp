@@ -484,8 +484,9 @@ void LB(string rd, string rs1, string offset)
     value = bin_to_dec(binary_value);*/
 }
 
-void LW(string rd, string rs1, string offset)
+void LW(string rd, string rs1, string offset) // LW ra,0(sp)
 {
+    // address in sp + offset. value in effective address stored in ra.
     int RsValue;
     int value;
     for (auto i : reg)
@@ -496,13 +497,14 @@ void LW(string rd, string rs1, string offset)
             break;
         }
     }
-    int RdValue = RsValue + stoi(offset);
-
-    for (auto i : codeaddresses)
+    int RdValue = RsValue + stoi(offset); // Effective address
+    cout << "RdValue is " << RdValue << endl;
+    for (auto i : fileaddresses)
     {
         if (i.first == RdValue)
         {
             value = stoi(i.second);
+            cout << "Value is " << value << endl;
             break;
         }
     }
@@ -514,6 +516,8 @@ void LW(string rd, string rs1, string offset)
             break;
         }
     }
+
+  
 }
 
 void LBU(string rd, string rs1, string offset)
@@ -532,16 +536,16 @@ void SH(string rd, string rs1, string offset)
 {
 }
 
-void SW(string rd, string rs1, string offset) // SW ra,0(sp) rs1 = ra ; sp = rd
+void SW(string baseAdd, string value, string offset) // SW ra,0(sp) value = ra ; baseAdd = rd
 {
-    // ra contains int value, sp contains base address. 1) Add the source base address to the offset to get the effective address.
+    // ra contains an int value, sp contains base address. 1) Add the source base address to the offset to get the effective address.
     //  2) store the value found in ra into the effective address calculated.
     int dValue;
     int effectiveAdd;
-
+    int sValue;
     for (auto i : reg)
     {
-        if (i.first == rd)
+        if (i.first == baseAdd)
         {
             dValue = stoi(i.second);
             break;
@@ -549,11 +553,21 @@ void SW(string rd, string rs1, string offset) // SW ra,0(sp) rs1 = ra ; sp = rd
     }
     effectiveAdd = dValue + stoi(offset);
     cout << "Effective Add is " << effectiveAdd << endl;
-    for (auto i : codeaddresses)
+    for (auto i : reg)
+    {
+        if (i.first == value)
+        {
+            sValue = stoi(i.second);
+            break;
+        }
+    }
+    cout << "sValue is " << sValue << endl;
+    for (auto i : fileaddresses)
     {
         if (i.first == effectiveAdd)
         {
-            i.second = rs1;
+
+            i.second = to_string(sValue);
             cout << "Value in Effective address is " << i.second << endl;
             break;
         }
@@ -1203,9 +1217,10 @@ int main()
         // else if (insname == "SH" || insname == "sh"){}
         else if (insname == "SW" || insname == "sw")
         {
-            getline(sep, RD, ',');
+            // SW ra,0(sp)
+            getline(sep, RS1, ',');
             getline(sep, OFF, '(');
-            getline(sep, RS1, ')');
+            getline(sep, RD, ')');
             // cout << "OFFset is " << OFF << endl;
             if (isX0(RD))
             {

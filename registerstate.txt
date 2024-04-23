@@ -1,6 +1,6 @@
 zero,0
-ra,0
-sp,0
+ra,12
+sp,1004
 gp,0
 tp,0
 t0,0
