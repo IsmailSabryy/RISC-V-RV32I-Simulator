@@ -9,8 +9,9 @@
 #include <algorithm>
 #include <sstream>
 #include <cmath>
+#include <cstdint>
 using namespace std;
-
+#define BITS sizeof(int) * 8
 vector<pair<string, string>> reg;
 map<int, string> fileaddresses;
 map<int, string> codeaddresses;
@@ -432,30 +433,31 @@ void LH(string rd, string rs1, string offset)
 {
     int RsValue;
     int value;
-    for (auto i : reg)
+    for (auto &i : reg)
     {
         if (i.first == rs1)
         {
-            RsValue = stoi(i.second);
+            RsValue = stoi(i.second); // address stored in rs1
             break;
         }
     }
+    int RdValue = RsValue + stoi(offset); // Effective address
 
-    int RdValue = RsValue + stoi(offset);
-
-    for (auto i : codeaddresses)
+    for (const auto &i : fileaddresses)
     {
         if (i.first == RdValue)
         {
-            value = stoi(i.second);
+            value = stoi(i.second); // Value in effective Address
             break;
         }
     }
-    for (auto i : reg)
+    int32_t sign_extended_value = (value << 16) >> 16;
+    // cout << "Sign extended value is " << sign_extended_value << endl;
+    for (auto &i : reg)
     {
         if (i.first == rd)
         {
-            i.second = to_string(value);
+            i.second = to_string(sign_extended_value); // Value in effAdd  -> rd
             break;
         }
     }
@@ -463,25 +465,36 @@ void LH(string rd, string rs1, string offset)
 
 void LB(string rd, string rs1, string offset)
 {
-    /*int destination = stoi(offset);
-    string binary = to_binary(rs1);
-    // int value = stoi(rd) && ((1 << 8 ) - 1);
-    int value = bin_to_dec(binary) && ((1 << 8) - 1);
-    int msb = 1 << (32 - 1);
-    if (value & msb)
+    int RsValue;
+    int value;
+    for (auto &i : reg)
     {
-        msb = 1;
+        if (i.first == rs1)
+        {
+            RsValue = stoi(i.second); // address stored in rs1
+            break;
+        }
     }
-    else
+    int RdValue = RsValue + stoi(offset); // Effective address
+
+    for (const auto &i : fileaddresses)
     {
-        msb = 0;
+        if (i.first == RdValue)
+        {
+            value = stoi(i.second); // Value in effective Address
+            break;
+        }
     }
-    string binary_value;
-    for (int i = 0; i < 32 - to_binary(to_string(value)).size(); i++)
+    int32_t sign_extended_value = (value << 24) >> 24;
+    // cout << "Sign extended value is " << sign_extended_value << endl;
+    for (auto &i : reg)
     {
-        binary_value += to_string(msb);
+        if (i.first == rd)
+        {
+            i.second = to_string(sign_extended_value); // Value in effAdd  -> rd
+            break;
+        }
     }
-    value = bin_to_dec(binary_value);*/
 }
 
 void LW(string rd, string rs1, string offset)
@@ -522,18 +535,155 @@ void LW(string rd, string rs1, string offset)
 
 void LBU(string rd, string rs1, string offset)
 {
+    int RsValue;
+    int value;
+    for (auto &i : reg)
+    {
+        if (i.first == rs1)
+        {
+            RsValue = stoi(i.second); // address stored in rs1
+            break;
+        }
+    }
+    int RdValue = RsValue + stoi(offset); // Effective address
+
+    for (const auto &i : fileaddresses)
+    {
+        if (i.first == RdValue)
+        {
+            value = stoi(i.second); // Value in effective Address
+            break;
+        }
+    }
+    int32_t zero_extended_value = (value & 0xFF);
+    // cout << "Sign extended value is " << zero_extended_value << endl;
+    for (auto &i : reg)
+    {
+        if (i.first == rd)
+        {
+            i.second = to_string(zero_extended_value); // Value in effAdd  -> rd
+            break;
+        }
+    }
 }
 
 void LHU(string rd, string rs1, string offset)
 {
+    int RsValue;
+    int value;
+    for (auto &i : reg)
+    {
+        if (i.first == rs1)
+        {
+            RsValue = stoi(i.second); // address stored in rs1
+            break;
+        }
+    }
+    int RdValue = RsValue + stoi(offset); // Effective address
+    cout << "Effect Address is " << RdValue << endl;
+    for (auto &i : fileaddresses)
+    {
+        if (i.first == RdValue)
+        {
+            value = stoi(i.second); // Value in effective Address
+            cout << "Value in EffecAdd is " << value << endl;
+            break;
+        }
+    }
+    int32_t zero_extended_value = (value & 0xFFFF);
+    // cout << "Sign extended value is " << zero_extended_value << endl;
+    for (auto &i : reg)
+    {
+        if (i.first == rd)
+        {
+            i.second = to_string(zero_extended_value); // Value in effAdd  -> rd
+            break;
+        }
+    }
 }
 
-void SB(string rd, string rs1, string offset)
+void SB(string baseAdd, string value, string offset)
 {
+    // SH ra,0(sp) sp-> base address, sp + 0 -> effective address, ra -> value to be stored
+    int dValue;
+    int effectiveAdd;
+    int sValue;
+
+    for (auto &i : reg)
+    {
+        if (i.first == baseAdd)
+        {
+            dValue = stoi(i.second); // address in rs (sp)
+            break;
+        }
+    }
+    for (auto &i : reg)
+    {
+        if (i.first == value)
+        {
+            sValue = stoi(i.second); // value in ra
+            break;
+        }
+    }
+    int offsetTemp = stoi(offset) / 4;        // offset can be any number -> if address = 1005 -> find 1004 and store lowest Byte
+    effectiveAdd = dValue + (offsetTemp * 4); // Effective address
+    sValue = sValue & 0xFF;                   // masking the lower 8 bits
+
+    // cout << "Effective Add is " << effectiveAdd << endl;
+    // cout << "sValue is " << sValue << endl;
+    if (sValue & (1 << 7))
+    {
+        sValue |= 0xFFFFFF00; // Sign extend
+    }
+    for (auto &i : fileaddresses)
+    {
+        if (i.first == effectiveAdd)
+        {
+            i.second = to_string(sValue);
+            // cout << "Value in Effective address is " << i.second << endl;
+            break;
+        }
+    }
 }
 
-void SH(string rd, string rs1, string offset)
+void SH(string baseAdd, string value, string offset)
 {
+    // SH ra,0(sp) sp-> base address, sp + 0 -> effective address, ra -> value to be stored
+    int dValue;
+    int effectiveAdd;
+    int sValue;
+
+    for (auto &i : reg)
+    {
+        if (i.first == baseAdd)
+        {
+            dValue = stoi(i.second);
+            break;
+        }
+    }
+
+    for (auto &i : reg)
+    {
+        if (i.first == value)
+        {
+            sValue = stoi(i.second);
+            break;
+        }
+    }
+    int offsetTemp = stoi(offset) / 4;        // offset can be a multiple of 2 -> if address = 1005 -> find 1004 and store lowest half word
+    effectiveAdd = dValue + (offsetTemp * 4); // Effective address
+    sValue = sValue & 0xFFFF;                 // masking the lower 16 bits
+    cout << "Effective Add is " << effectiveAdd << endl;
+    cout << "sValue is " << sValue << endl;
+    for (auto &i : fileaddresses)
+    {
+        if (i.first == effectiveAdd)
+        {
+            i.second = to_string(sValue);
+            cout << "Value in Effective address is " << i.second << endl;
+            break;
+        }
+    }
 }
 
 void SW(string baseAdd, string value, string offset)
@@ -552,7 +702,7 @@ void SW(string baseAdd, string value, string offset)
     }
 
     effectiveAdd = dValue + stoi(offset);
-    cout << "Effective Add is " << effectiveAdd << endl;
+    // cout << "Effective Add is " << effectiveAdd << endl;
 
     for (auto &i : reg)
     {
@@ -562,13 +712,13 @@ void SW(string baseAdd, string value, string offset)
             break;
         }
     }
-    cout << "sValue is " << sValue << endl;
+    // cout << "sValue is " << sValue << endl;
     for (auto &i : fileaddresses)
     {
         if (i.first == effectiveAdd)
         {
             i.second = to_string(sValue);
-            cout << "Value in Effective address is " << i.second << endl;
+            // cout << "Value in Effective address is " << i.second << endl;
             break;
         }
     }
@@ -1209,12 +1359,102 @@ int main()
                 LW(RD, RS1, OFF);
             }
         }
-        // else if (insname == "LH" || insname == "lh"){}
-        // else if (insname == "LB" || insname == "lb"){}
-        // else if (insname == "LBU" || insname == "lbu"){}
-        // else if (insname == "LHU" || insname == "lhu"){}
-        // else if (insname == "SB" || insname == "sb"){}
-        // else if (insname == "SH" || insname == "sh"){}
+        else if (insname == "LH" || insname == "lh")
+        {
+            getline(sep, RD, ',');
+            getline(sep, OFF, '(');
+            getline(sep, RS1, ')');
+            // cout << "OFFset is " << OFF << endl;
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+
+                LH(RD, RS1, OFF);
+            }
+        }
+        else if (insname == "LB" || insname == "lb")
+        {
+            getline(sep, RD, ',');
+            getline(sep, OFF, '(');
+            getline(sep, RS1, ')');
+            // cout << "OFFset is " << OFF << endl;
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+
+                LB(RD, RS1, OFF);
+            }
+        }
+        else if (insname == "LBU" || insname == "lbu")
+        {
+            getline(sep, RD, ',');
+            getline(sep, OFF, '(');
+            getline(sep, RS1, ')');
+            // cout << "OFFset is " << OFF << endl;
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+
+                LBU(RD, RS1, OFF);
+            }
+        }
+        else if (insname == "LHU" || insname == "lhu")
+        {
+            getline(sep, RD, ',');
+            getline(sep, OFF, '(');
+            getline(sep, RS1, ')');
+            // cout << "OFFset is " << OFF << endl;
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+
+                LHU(RD, RS1, OFF);
+            }
+        }
+        else if (insname == "SB" || insname == "sb")
+        {
+            getline(sep, RS1, ',');
+            getline(sep, OFF, '(');
+            getline(sep, RD, ')');
+            // cout << "OFFset is " << OFF << endl;
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+
+                SB(RD, RS1, OFF);
+            }
+        }
+        else if (insname == "SH" || insname == "sh")
+        {
+            getline(sep, RS1, ',');
+            getline(sep, OFF, '(');
+            getline(sep, RD, ')');
+            // cout << "OFFset is " << OFF << endl;
+            if (isX0(RD))
+            {
+                return 0;
+            }
+            else
+            {
+
+                SH(RD, RS1, OFF);
+            }
+        }
         else if (insname == "SW" || insname == "sw")
         {
             // SW ra,0(sp)
@@ -1230,10 +1470,6 @@ int main()
             {
 
                 SW(RD, RS1, OFF);
-                for (pair<string, string> linee : reg)
-                {
-                    cout << linee.first << " " << linee.second << endl;
-                }
             }
         }
         // else if (insname == "LUI" || insname == "lui"){}
