@@ -1,8 +1,15 @@
 main:
-       LUI a5,8
+       AUIPC a5,8
        ADDI a4,a1,7 
        ADDI sp,sp,-4
-	SB ra,0(sp)
+	SW ra,0(sp)
        ADDI ra,ra,4
-       LB ra,0(sp)
+       LW ra,0(sp)
        ADDI sp,sp,4
+       BLT zero,sp,L2
+L1:
+       ADDI a4,a4,7
+       ADDI a4,a4,7
+       JAL a6,L3
+L2:
+       ADDI a4,a4,8

@@ -15,6 +15,7 @@ using namespace std;
 vector<pair<string, string>> reg;
 map<int, string> fileaddresses;
 map<int, string> codeaddresses;
+map<int, string> fakecodeaddresses;
 
 string dectobinary(const string &numStr) // using twos complement
 {
@@ -215,7 +216,6 @@ void ADDI(string rd, string rs1, string imm)
     int temp2 = stoi(imm);
     int temp3 = temp2 + temp1;
     it_rd->second = to_string(temp3);
-    // cout << "New value of " << it_rd->first << ": " << it_rd->second << endl;
 }
 
 void SLTI(string rd, string rs1, string imm)
@@ -305,15 +305,6 @@ void LUI(string rd, string imm)
     luistring.erase(0, 12);
     luistring += "000000000000";
     it_rd->second = to_string(bin_to_dec(luistring));
-}
-
-void AUIPC(string rd, string imm)
-{
-    string auipcstring;
-    auipcstring = to_binary(imm);
-    auipcstring.erase(0, 12);
-    auipcstring += "000000000000";
-    ADDI(rd, strbin_to_dec(auipcstring), strbin_to_dec("0"));
 }
 
 int JAL(string rd, string imm, int currentaddress)
@@ -452,7 +443,6 @@ void LH(string rd, string rs1, string offset)
         }
     }
     int32_t sign_extended_value = (value << 16) >> 16;
-    // cout << "Sign extended value is " << sign_extended_value << endl;
     for (auto &i : reg)
     {
         if (i.first == rd)
@@ -486,7 +476,6 @@ void LB(string rd, string rs1, string offset)
         }
     }
     int32_t sign_extended_value = (value << 24) >> 24;
-    // cout << "Sign extended value is " << sign_extended_value << endl;
     for (auto &i : reg)
     {
         if (i.first == rd)
@@ -512,14 +501,12 @@ void LW(string rd, string rs1, string offset)
     }
 
     int RdValue = RsValue + stoi(offset);
-    cout << "RdValue is " << RdValue << endl;
     for (const auto &i : fileaddresses)
     {
         if (i.first == RdValue)
         {
 
             value = i.second;
-            cout << " Value" << value << endl;
             break;
         }
     }
@@ -556,7 +543,6 @@ void LBU(string rd, string rs1, string offset)
         }
     }
     int32_t zero_extended_value = (value & 0xFF);
-    // cout << "Sign extended value is " << zero_extended_value << endl;
     for (auto &i : reg)
     {
         if (i.first == rd)
@@ -580,23 +566,20 @@ void LHU(string rd, string rs1, string offset)
         }
     }
     int RdValue = RsValue + stoi(offset); // Effective address
-    cout << "Effect Address is " << RdValue << endl;
     for (auto &i : fileaddresses)
     {
         if (i.first == RdValue)
         {
             value = stoi(i.second); // Value in effective Address
-            cout << "Value in EffecAdd is " << value << endl;
             break;
         }
     }
     int32_t zero_extended_value = (value & 0xFFFF);
-    // cout << "Sign extended value is " << zero_extended_value << endl;
     for (auto &i : reg)
     {
         if (i.first == rd)
         {
-            i.second = to_string(zero_extended_value); // Value in effAdd  -> rd
+            i.second = to_string(zero_extended_value);
             break;
         }
     }
@@ -628,9 +611,6 @@ void SB(string baseAdd, string value, string offset)
     int offsetTemp = stoi(offset) / 4;        // offset can be any number -> if address = 1005 -> find 1004 and store lowest Byte
     effectiveAdd = dValue + (offsetTemp * 4); // Effective address
     sValue = sValue & 0xFF;                   // masking the lower 8 bits
-
-    // cout << "Effective Add is " << effectiveAdd << endl;
-    // cout << "sValue is " << sValue << endl;
     if (sValue & (1 << 7))
     {
         sValue |= 0xFFFFFF00; // Sign extend
@@ -640,7 +620,6 @@ void SB(string baseAdd, string value, string offset)
         if (i.first == effectiveAdd)
         {
             i.second = to_string(sValue);
-            // cout << "Value in Effective address is " << i.second << endl;
             break;
         }
     }
@@ -648,7 +627,6 @@ void SB(string baseAdd, string value, string offset)
 
 void SH(string baseAdd, string value, string offset)
 {
-    // SH ra,0(sp) sp-> base address, sp + 0 -> effective address, ra -> value to be stored
     int dValue;
     int effectiveAdd;
     int sValue;
@@ -673,14 +651,11 @@ void SH(string baseAdd, string value, string offset)
     int offsetTemp = stoi(offset) / 4;        // offset can be a multiple of 2 -> if address = 1005 -> find 1004 and store lowest half word
     effectiveAdd = dValue + (offsetTemp * 4); // Effective address
     sValue = sValue & 0xFFFF;                 // masking the lower 16 bits
-    cout << "Effective Add is " << effectiveAdd << endl;
-    cout << "sValue is " << sValue << endl;
     for (auto &i : fileaddresses)
     {
         if (i.first == effectiveAdd)
         {
             i.second = to_string(sValue);
-            cout << "Value in Effective address is " << i.second << endl;
             break;
         }
     }
@@ -702,7 +677,6 @@ void SW(string baseAdd, string value, string offset)
     }
 
     effectiveAdd = dValue + stoi(offset);
-    // cout << "Effective Add is " << effectiveAdd << endl;
 
     for (auto &i : reg)
     {
@@ -712,13 +686,11 @@ void SW(string baseAdd, string value, string offset)
             break;
         }
     }
-    // cout << "sValue is " << sValue << endl;
     for (auto &i : fileaddresses)
     {
         if (i.first == effectiveAdd)
         {
             i.second = to_string(sValue);
-            // cout << "Value in Effective address is " << i.second << endl;
             break;
         }
     }
@@ -923,13 +895,11 @@ bool isX0(string rd)
 int main()
 {
     int address;
-    cout << " Input starting adress" << endl;
+    cout << "Input starting adress" << endl;
     cin >> address;
-
     vector<string> filelines;
     ifstream reader("riscvcode.txt");
     ifstream registerstate("registerstate.txt");
-    ifstream filead("ad.txt");
     string linereg;
     while (getline(registerstate, linereg))
     {
@@ -939,19 +909,11 @@ int main()
         getline(str, linesep2);
         reg.push_back(make_pair(linesep1, linesep2));
     }
-    string linead;
-    while (getline(filead, linead))
-    {
-        stringstream str(linead);
-        string linesep1, linesep2;
-        getline(str, linesep1, ',');
-        getline(str, linesep2);
-        fileaddresses[stoi(linesep1)] = linesep2;
-    }
     string line;
     while (getline(reader, line))
     {
         string inputline;
+        string finalline;
         bool found = false;
         int count = 0;
         if (!line.empty())
@@ -966,43 +928,66 @@ int main()
                 count++;
             }
             inputline = line.substr(count, line.length());
-            filelines.push_back(inputline);
+            for (int j = 0; j < inputline.length(); j++)
+            {
+                if (inputline[j] == ':')
+                {
+                    continue;
+                }
+                else
+                    finalline += inputline[j];
+            }
+            filelines.push_back(finalline);
         }
     }
-    auto it_complete = find(filelines.begin(), filelines.end(), "main:");
+    auto it_complete = find(filelines.begin(), filelines.end(), "main");
     auto itfiner = fileaddresses.begin();
-    if (it_complete != filelines.end())
+    while (it_complete != filelines.end())
     {
-        it_complete++;
-        while (it_complete != filelines.end() && itfiner != fileaddresses.end())
+
+        string s = *it_complete;
+        fileaddresses[address] = "0";
+        int count = 0;
+        for (int i = 0; i < s.length(); i++)
         {
-            if (itfiner->first == address)
+            if (s[i] == ',')
             {
-                string s = *it_complete;
-                codeaddresses[address] = s;
-                address += 4;
-                it_complete++;
-                itfiner++;
-            }
-            else
-            {
-                itfiner++;
-                it_complete++;
+                count++;
             }
         }
+        if (count != 0)
+        {
+            codeaddresses[address] = s;
+            address += 4;
+        }
+        else
+        {
+            fakecodeaddresses[address] = s;
+        }
+        it_complete++;
+        itfiner++;
     }
+
     for (const auto &pair : codeaddresses)
     {
         cout << pair.first << ": " << pair.second << endl;
     }
+    cout << "fake:" << endl;
+    for (const auto &pair : fakecodeaddresses)
+    {
+        cout << pair.first << ": " << pair.second << endl;
+    }
     auto it = codeaddresses.begin();
+
     while (it != codeaddresses.end())
     {
+        bool jumpflag = false;
         stringstream sep(it->second);
         string insname, RD, RS1, RS2, IMM, OFF;
         getline(sep, insname, ' ');
-        address = it->first + 4;
-        if (insname == "ADDI" || insname == "addi")
+        address = it->first;
+
+        if (insname == "ADDI" || insname == "addi") // 1
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1014,7 +999,7 @@ int main()
 
             ADDI(RD, RS1, IMM);
         }
-        else if (insname == "ADD" || insname == "add")
+        else if (insname == "ADD" || insname == "add") // 2
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1025,7 +1010,7 @@ int main()
             }
             add(RD, RS1, RS2);
         }
-        else if (insname == "SUB" || insname == "sub")
+        else if (insname == "SUB" || insname == "sub") // 3
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1039,7 +1024,7 @@ int main()
                 sub(RD, RS1, RS2);
             }
         }
-        else if (insname == "LUI" || insname == "lui")
+        else if (insname == "LUI" || insname == "lui") // 4
         {
             getline(sep, RD, ',');
             getline(sep, IMM);
@@ -1049,7 +1034,7 @@ int main()
             }
             LUI(RD, IMM);
         }
-        else if (insname == "SLTI" || insname == "slti")
+        else if (insname == "SLTI" || insname == "slti") // 5
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1063,7 +1048,7 @@ int main()
                 SLTI(RD, RS1, IMM);
             }
         }
-        else if (insname == "SLTIU" || insname == "sltiu")
+        else if (insname == "SLTIU" || insname == "sltiu") // 6
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1077,7 +1062,7 @@ int main()
                 SLTIU(RD, RS1, IMM);
             }
         }
-        else if (insname == "ORI" || insname == "ori")
+        else if (insname == "ORI" || insname == "ori") // 7
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1091,7 +1076,7 @@ int main()
                 ORI(RD, RS1, IMM);
             }
         }
-        else if (insname == "OR" || insname == "or")
+        else if (insname == "OR" || insname == "or") // 8
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1105,7 +1090,7 @@ int main()
                 OR(RD, RS1, RS2);
             }
         }
-        else if (insname == "AND" || insname == "and")
+        else if (insname == "AND" || insname == "and") // 9
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1119,7 +1104,7 @@ int main()
                 AND(RD, RS1, RS2);
             }
         }
-        else if (insname == "ANDI" || insname == "andi")
+        else if (insname == "ANDI" || insname == "andi") // 10
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1133,7 +1118,7 @@ int main()
                 ANDI(RD, RS1, IMM);
             }
         }
-        else if (insname == "XORI" || insname == "xori")
+        else if (insname == "XORI" || insname == "xori") // 11
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1147,7 +1132,7 @@ int main()
                 XORI(RD, RS1, IMM);
             }
         }
-        else if (insname == "XOR" || insname == "xor")
+        else if (insname == "XOR" || insname == "xor") // 12
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1161,77 +1146,143 @@ int main()
                 XOR(RD, RS1, RS2);
             }
         }
-        else if (insname == "BNE" || insname == "bne")
+        else if (insname == "BNE" || insname == "bne") // 13
         {
+            string jump;
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
-            getline(sep, IMM);
-            if (isX0(RD))
+            getline(sep, jump);
+            auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                 { return p.first == RD; });
+            auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                  { return p.first == RS1; });
+            if (it_rd->second != it_rs1->second)
             {
-                return 0;
-            }
-            else
-            {
-                // bne();
+                for (auto i : fakecodeaddresses)
+                {
+                    if (i.second == jump)
+                    {
+                        jumpflag = true;
+                        address = i.first;
+                    }
+                }
             }
         }
-        else if (insname == "BEQ" || insname == "beq")
+        else if (insname == "BEQ" || insname == "beq") // 14
         {
+            string jump;
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
-            getline(sep, IMM);
-            if (isX0(RD))
+            getline(sep, jump);
+            auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                 { return p.first == RD; });
+            auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                  { return p.first == RS1; });
+            if (it_rd->second == it_rs1->second)
             {
-                return 0;
-            }
-            else
-            {
-                // beq();
+                for (auto i : fakecodeaddresses)
+                {
+                    if (i.second == jump)
+                    {
+                        jumpflag = true;
+                        address = i.first;
+                    }
+                }
             }
         }
-        else if (insname == "BLT" || insname == "blt")
+        else if (insname == "BLT" || insname == "blt") // 15
         {
+            string jump;
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
-            getline(sep, IMM);
-            if (isX0(RD))
+            getline(sep, jump);
+            auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                 { return p.first == RD; });
+            auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                  { return p.first == RS1; });
+            if (stoi(it_rd->second) < stoi(it_rs1->second))
             {
-                return 0;
-            }
-            else
-            {
-                // blt();
+                for (auto i : fakecodeaddresses)
+                {
+                    if (i.second == jump)
+                    {
+                        jumpflag = true;
+                        address = i.first;
+                    }
+                }
             }
         }
-        else if (insname == "BGE" || insname == "bge")
+        else if (insname == "BGE" || insname == "bge") // 16
         {
+            string jump;
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
-            getline(sep, IMM);
-            if (isX0(RD))
+            getline(sep, jump);
+            auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                 { return p.first == RD; });
+            auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                  { return p.first == RS1; });
+            if (stoi(it_rd->second) > stoi(it_rs1->second))
             {
-                return 0;
-            }
-            else
-            {
-                // bge();
+                for (auto i : fakecodeaddresses)
+                {
+                    if (i.second == jump)
+                    {
+                        jumpflag = true;
+                        address = i.first;
+                    }
+                }
             }
         }
-        else if (insname == "BLTU" || insname == "blt")
+        else if (insname == "BLTU" || insname == "blt") // 17
         {
+            string jump;
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
-            getline(sep, IMM);
-            if (isX0(RD))
+            getline(sep, jump);
+            auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                 { return p.first == RD; });
+            auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                  { return p.first == RS1; });
+            unsigned int rd1 = stoi(it_rd->second);
+            unsigned int rs11 = stoi(it_rs1->second);
+            if (rd1 < rs11)
             {
-                return 0;
-            }
-            else
-            {
-                // bltu();
+                for (auto i : fakecodeaddresses)
+                {
+                    if (i.second == jump)
+                    {
+                        jumpflag = true;
+                        address = i.first;
+                    }
+                }
             }
         }
-        else if (insname == "SRLI" || insname == "srli")
+        else if (insname == "BGEU" || insname == "bgeu") // 18
+        {
+            string jump;
+            getline(sep, RD, ',');
+            getline(sep, RS1, ',');
+            getline(sep, jump);
+            auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                 { return p.first == RD; });
+            auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                  { return p.first == RS1; });
+            unsigned int rd1 = stoi(it_rd->second);
+            unsigned int rs11 = stoi(it_rs1->second);
+            if (rd1 > rs11)
+            {
+                for (auto i : fakecodeaddresses)
+                {
+                    if (i.second == jump)
+                    {
+                        jumpflag = true;
+                        address = i.first;
+                    }
+                }
+            }
+        }
+        else if (insname == "SRLI" || insname == "srli") // 19
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1245,7 +1296,7 @@ int main()
                 srli(RD, RS1, RS2);
             }
         }
-        else if (insname == "SLLI" || insname == "slli")
+        else if (insname == "SLLI" || insname == "slli") // 20
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1259,7 +1310,7 @@ int main()
                 slli(RD, RS1, RS2);
             }
         }
-        else if (insname == "SRAI" || insname == "srai")
+        else if (insname == "SRAI" || insname == "srai") // 21
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1273,7 +1324,7 @@ int main()
                 srai(RD, RS1, RS2);
             }
         }
-        else if (insname == "SLL" || insname == "sll")
+        else if (insname == "SLL" || insname == "sll") // 22
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1287,7 +1338,7 @@ int main()
                 sll(RD, RS1, RS2);
             }
         }
-        else if (insname == "SLT" || insname == "slt")
+        else if (insname == "SLT" || insname == "slt") // 23
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1301,7 +1352,7 @@ int main()
                 slt(RD, RS1, RS2);
             }
         }
-        else if (insname == "SLTU" || insname == "sltu")
+        else if (insname == "SLTU" || insname == "sltu") // 24
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1315,7 +1366,7 @@ int main()
                 sltu(RD, RS1, RS2);
             }
         }
-        else if (insname == "SRL" || insname == "srl")
+        else if (insname == "SRL" || insname == "srl") // 25
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1329,7 +1380,7 @@ int main()
                 srl(RD, RS1, RS2);
             }
         }
-        else if (insname == "SRA" || insname == "sra")
+        else if (insname == "SRA" || insname == "sra") // 26
         {
             getline(sep, RD, ',');
             getline(sep, RS1, ',');
@@ -1343,12 +1394,11 @@ int main()
                 sra(RD, RS1, RS2);
             }
         }
-        else if (insname == "LW" || insname == "lw")
+        else if (insname == "LW" || insname == "lw") // 27
         {
             getline(sep, RD, ',');
             getline(sep, OFF, '(');
             getline(sep, RS1, ')');
-            // cout << "OFFset is " << OFF << endl;
             if (isX0(RD))
             {
                 return 0;
@@ -1359,12 +1409,11 @@ int main()
                 LW(RD, RS1, OFF);
             }
         }
-        else if (insname == "LH" || insname == "lh")
+        else if (insname == "LH" || insname == "lh") // 28
         {
             getline(sep, RD, ',');
             getline(sep, OFF, '(');
             getline(sep, RS1, ')');
-            // cout << "OFFset is " << OFF << endl;
             if (isX0(RD))
             {
                 return 0;
@@ -1375,12 +1424,11 @@ int main()
                 LH(RD, RS1, OFF);
             }
         }
-        else if (insname == "LB" || insname == "lb")
+        else if (insname == "LB" || insname == "lb") // 29
         {
             getline(sep, RD, ',');
             getline(sep, OFF, '(');
             getline(sep, RS1, ')');
-            // cout << "OFFset is " << OFF << endl;
             if (isX0(RD))
             {
                 return 0;
@@ -1391,12 +1439,11 @@ int main()
                 LB(RD, RS1, OFF);
             }
         }
-        else if (insname == "LBU" || insname == "lbu")
+        else if (insname == "LBU" || insname == "lbu") // 30
         {
             getline(sep, RD, ',');
             getline(sep, OFF, '(');
             getline(sep, RS1, ')');
-            // cout << "OFFset is " << OFF << endl;
             if (isX0(RD))
             {
                 return 0;
@@ -1407,12 +1454,11 @@ int main()
                 LBU(RD, RS1, OFF);
             }
         }
-        else if (insname == "LHU" || insname == "lhu")
+        else if (insname == "LHU" || insname == "lhu") // 31
         {
             getline(sep, RD, ',');
             getline(sep, OFF, '(');
             getline(sep, RS1, ')');
-            // cout << "OFFset is " << OFF << endl;
             if (isX0(RD))
             {
                 return 0;
@@ -1423,12 +1469,11 @@ int main()
                 LHU(RD, RS1, OFF);
             }
         }
-        else if (insname == "SB" || insname == "sb")
+        else if (insname == "SB" || insname == "sb") // 32
         {
             getline(sep, RS1, ',');
             getline(sep, OFF, '(');
             getline(sep, RD, ')');
-            // cout << "OFFset is " << OFF << endl;
             if (isX0(RD))
             {
                 return 0;
@@ -1439,12 +1484,11 @@ int main()
                 SB(RD, RS1, OFF);
             }
         }
-        else if (insname == "SH" || insname == "sh")
+        else if (insname == "SH" || insname == "sh") // 33
         {
             getline(sep, RS1, ',');
             getline(sep, OFF, '(');
             getline(sep, RD, ')');
-            // cout << "OFFset is " << OFF << endl;
             if (isX0(RD))
             {
                 return 0;
@@ -1455,13 +1499,12 @@ int main()
                 SH(RD, RS1, OFF);
             }
         }
-        else if (insname == "SW" || insname == "sw")
+        else if (insname == "SW" || insname == "sw") // 34
         {
             // SW ra,0(sp)
             getline(sep, RS1, ',');
             getline(sep, OFF, '(');
             getline(sep, RD, ')');
-            // cout << "OFFset is " << OFF << endl;
             if (isX0(RD))
             {
                 return 0;
@@ -1472,9 +1515,61 @@ int main()
                 SW(RD, RS1, OFF);
             }
         }
-        // else if (insname == "LUI" || insname == "lui"){}
-        // else if (insname == "AUIPC" || insname == "auipc"){}
-        else if (insname == "FENCE" || insname == "ECALL" || insname == "EBREAK")
+        else if (insname == "JAL" || insname == "jal") // 35
+        {
+            string jump;
+            getline(sep, RD, ',');
+            getline(sep, jump);
+            if (RD == "zero")
+            {
+                for (auto i : fakecodeaddresses)
+                {
+                    if (i.second == jump)
+                    {
+                        jumpflag = true;
+                        address = i.first;
+                    }
+                }
+            }
+            else
+            {
+                for (auto i : fakecodeaddresses)
+                {
+                    if (i.second == jump)
+                    {
+                        jumpflag = true;
+                        address = i.first;
+                        auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                             { return p.first == RD; });
+                        it_rd->second = to_string(address);
+                    }
+                }
+            }
+        }
+        else if (insname == "JALR" || insname == "jalr") // 36
+        {
+        }
+        else if (insname == "AUIPC" || insname == "auipc") // 37
+        {
+            getline(sep, RD, ',');
+            getline(sep, IMM);
+            if (isX0(RD))
+            {
+                break;
+            }
+            string auipcstring;
+            int stoiimm;
+            stoiimm = stoi(IMM) + address;
+            IMM = to_string(stoiimm);
+            auipcstring = to_binary(IMM);
+            auipcstring.erase(0, 12);
+            auipcstring += "000000000000";
+            auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                 { return p.first == RD; });
+            int deci = bin_to_dec(auipcstring);
+            it_rd->second = to_string(deci);
+        }
+        else if (insname == "FENCE" || insname == "ECALL" || insname == "EBREAK") // 40
         {
             cout << " Exit instruction entered, aborting process" << endl;
             return 0;
@@ -1484,8 +1579,16 @@ int main()
             cout << " Exit instruction entered, aborting process" << endl;
             return 0;
         }
-
-        it = codeaddresses.find(address);
+        if (jumpflag == false)
+        {
+            address = it->first + 4;
+            it = codeaddresses.find(address);
+        }
+        else
+        {
+            it = codeaddresses.find(address);
+            address += 4;
+        }
     }
     for (pair<string, string> linee : reg)
     {
