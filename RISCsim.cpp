@@ -11,7 +11,6 @@
 #include <cmath>
 #include <cstdint>
 using namespace std;
-#define BITS sizeof(int) * 8
 vector<pair<string, string>> reg;
 map<int, string> fileaddresses;
 map<int, string> codeaddresses;
@@ -307,119 +306,6 @@ void LUI(string rd, string imm)
     it_rd->second = to_string(bin_to_dec(luistring));
 }
 
-int JAL(string rd, string imm, int currentaddress)
-{
-    int jumpaddress = currentaddress + stoi(imm);
-    return jumpaddress;
-}
-
-int JALR(string ra, string offset)
-{
-    int jumpaddress = stoi(offset) + 4 /*+ ra adress */;
-    return jumpaddress;
-}
-
-int BEQ(string rs1, string rs2, string imm, int currentaddress)
-{
-
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs2; });
-    int temp1 = stoi(it_rs1->second);
-    int temp2 = stoi(it_rs2->second);
-    int jumpaddress = currentaddress;
-    if (temp1 == temp2)
-    {
-        jumpaddress = currentaddress + stoi(imm);
-    }
-    return jumpaddress;
-}
-
-int BNE(string rs1, string rs2, string imm, int currentaddress)
-{
-
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs2; });
-    int temp1 = stoi(it_rs1->second);
-    int temp2 = stoi(it_rs2->second);
-    int jumpaddress = currentaddress;
-    if (temp1 != temp2)
-    {
-        jumpaddress = currentaddress + stoi(imm);
-    }
-    return jumpaddress;
-}
-
-int BLT(string rs1, string rs2, string imm, int currentaddress)
-{
-
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs2; });
-    int temp1 = stoi(it_rs1->second);
-    int temp2 = stoi(it_rs2->second);
-    int jumpaddress = currentaddress;
-    if (temp1 < temp2)
-    {
-        jumpaddress = currentaddress + stoi(imm);
-    }
-    return jumpaddress;
-}
-
-int BGE(string rs1, string rs2, string imm, int currentaddress)
-{
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs2; });
-    int temp1 = stoi(it_rs1->second);
-    int temp2 = stoi(it_rs2->second);
-    int jumpaddress = currentaddress;
-    if (temp1 > temp2)
-    {
-        jumpaddress = currentaddress + stoi(imm);
-    }
-    return jumpaddress;
-}
-
-int BLTU(string rs1, string rs2, string imm, int currentaddress)
-{
-
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs2; });
-    unsigned int temp1 = stoi(it_rs1->second);
-    unsigned int temp2 = stoi(it_rs2->second);
-    int jumpaddress = currentaddress;
-    if (temp1 < temp2)
-    {
-        jumpaddress = currentaddress + stoi(imm);
-    }
-    return jumpaddress;
-}
-
-int BGEU(string rs1, string rs2, string imm, int currentaddress)
-{
-
-    auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs1; });
-    auto it_rs2 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                          { return p.first == rs2; });
-    unsigned int temp1 = stoi(it_rs1->second);
-    unsigned int temp2 = stoi(it_rs2->second);
-    int jumpaddress = currentaddress;
-    if (temp1 > temp2)
-    {
-        jumpaddress = currentaddress + stoi(imm);
-    }
-    return jumpaddress;
-}
-
 void LH(string rd, string rs1, string offset)
 {
     int RsValue;
@@ -587,7 +473,6 @@ void LHU(string rd, string rs1, string offset)
 
 void SB(string baseAdd, string value, string offset)
 {
-    // SH ra,0(sp) sp-> base address, sp + 0 -> effective address, ra -> value to be stored
     int dValue;
     int effectiveAdd;
     int sValue;
@@ -886,6 +771,7 @@ bool isX0(string rd)
 {
     if (rd == "zero")
     {
+        cout << "Zero register cannot be altered, check your code" << endl;
         return true;
     }
     else
@@ -994,7 +880,7 @@ int main()
             getline(sep, IMM);
             if (isX0(RD))
             {
-                break;
+                return 0;
             }
 
             ADDI(RD, RS1, IMM);
@@ -1006,7 +892,7 @@ int main()
             getline(sep, RS2);
             if (isX0(RD))
             {
-                break;
+                return 0;
             }
             add(RD, RS1, RS2);
         }
@@ -1030,7 +916,7 @@ int main()
             getline(sep, IMM);
             if (isX0(RD))
             {
-                break;
+                return 0;
             }
             LUI(RD, IMM);
         }
@@ -1548,6 +1434,47 @@ int main()
         }
         else if (insname == "JALR" || insname == "jalr") // 36
         {
+            string jump;
+            getline(sep, RD, ',');
+            getline(sep, RS1, ','); // register containing address
+            getline(sep, OFF);
+            auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                  { return p.first == RS1; });
+            unsigned int sValue = stoi(it_rs1->second); // address stored in register rs1
+            int jumpTemp = sValue + stoi(OFF);
+            for (auto i : fakecodeaddresses)
+            {
+                if (i.first == jumpTemp)
+                {
+                    jump = i.second;
+                }
+            }
+            if (RD == "zero")
+            {
+                for (auto i : fakecodeaddresses)
+                {
+                    if (i.second == jump)
+                    {
+
+                        jumpflag = true;
+                        address = i.first;
+                    }
+                }
+            }
+            else
+            {
+                for (auto i : fakecodeaddresses)
+                {
+                    if (i.second == jump)
+                    {
+                        jumpflag = true;
+                        address = i.first;
+                        auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                             { return p.first == RD; });
+                        it_rd->second = to_string(address + 4);
+                    }
+                }
+            }
         }
         else if (insname == "AUIPC" || insname == "auipc") // 37
         {

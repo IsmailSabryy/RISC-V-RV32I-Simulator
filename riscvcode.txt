@@ -1,6 +1,6 @@
 main:
-       AUIPC a5,8
-       ADDI a4,a1,7 
+       ADDI a5,a5,1000
+       ADDI a3,a1,30 
        ADDI sp,sp,-4
 	SW ra,0(sp)
        ADDI ra,ra,4
@@ -8,8 +8,9 @@ main:
        ADDI sp,sp,4
        BLT zero,sp,L2
 L1:
-       ADDI a4,a4,7
-       ADDI a4,a4,7
-       JAL a6,L3
+       ADDI a4,a4,5
+       ADDI a4,a4,5
 L2:
-       ADDI a4,a4,8
+       BEQ a4,a3,END
+       JALR a6,a5,32
+END:
