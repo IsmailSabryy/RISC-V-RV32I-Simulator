@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <windows.h>
 #include <conio.h>
+#include <iomanip>
 using namespace std;
 vector<pair<string, string>> reg;
 map<int, string> fileaddresses;
@@ -21,7 +22,7 @@ map<int, string> fakecodeaddresses;
 string dectobinary(const string &numStr) // using twos complement
 {
     int num = stoi(numStr);
-    int numbits = (int)log2(abs(num)) + 1; // to get the number of bits for number
+    int numbits = 32; // to get the number of bits for number
     string binary = "";
 
     if (num < 0) // when dealing with negative nums. use two's complement
@@ -514,6 +515,7 @@ void SB(string baseAdd, string value, string offset)
 
 void SH(string baseAdd, string value, string offset)
 {
+
     int dValue;
     int effectiveAdd;
     int sValue;
@@ -928,9 +930,13 @@ void showResult(const vector<pair<string, string>> &reg, const map<int, string> 
                 }
                 else
                 {
+                    cout << left << setw(10) << "REG" << setw(10) << "DEC" << setw(40) << "BIN" << setw(40) << "HEX" << endl;
+
                     for (const auto &linee : reg)
                     {
-                        cout << linee.first << " " << linee.second << endl;
+                        string bin = "0b" + dectobinary(linee.second);
+                        string hex = "0x" + dectohex(linee.second);
+                        cout << left << setw(10) << linee.first << setw(10) << linee.second << setw(40) << bin << setw(40) << hex << endl;
                     }
                 }
                 getch();
