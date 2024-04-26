@@ -825,7 +825,7 @@ int showMenu()
         goto_row_col(12, 39);
         cout << menu[2];
         goto_row_col(13, 39);
-        cout << menu[1];
+        cout << menu[3];
         setColor(240);
         goto_row_col(10 + pos - 1, 39);
         cout << menu[pos - 1];
@@ -1634,11 +1634,14 @@ int main()
                 {
                     if (i.second == jump)
                     {
+
                         jumpflag = true;
-                        address = i.first;
+                        address = address + 4;
                         auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                              { return p.first == RD; });
+
                         it_rd->second = to_string(address);
+                        address = i.first;
                     }
                 }
             }
