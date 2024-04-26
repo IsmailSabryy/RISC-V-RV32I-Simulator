@@ -885,7 +885,7 @@ int showMenu()
 }
 char menu2[4][45] = {
     {" 1] Print Register Content         "},
-    {" 2] Print Memory Content           "},
+    {" 2] Print Code to be executed       "},
     {" 3] Print Labels and their addresses "},
     {" 4] Exit Solver                     "}};
 void showResult(const vector<pair<string, string>> &reg, const map<int, string> &codeaddresses, const map<int, string> &fakecodeaddresses, int add)
@@ -941,7 +941,8 @@ void showResult(const vector<pair<string, string>> &reg, const map<int, string> 
                 setColor(15);
                 ShowConsoleCursor(true);
                 system("cls");
-                cout << "Memory Content : " << endl;
+                cout << "Code to be executed : " << endl;
+                cout << "Note that the values next to the instruction represnet memory addresses " << endl;
                 for (const auto &pair : codeaddresses)
                 {
                     cout << pair.first << ": " << pair.second << endl;
@@ -952,6 +953,7 @@ void showResult(const vector<pair<string, string>> &reg, const map<int, string> 
             case 3:
                 setColor(15);
                 ShowConsoleCursor(true);
+                system("cls");
                 cout << "Labels and their respective address : " << endl;
                 for (const auto &pair : fakecodeaddresses)
                 {
