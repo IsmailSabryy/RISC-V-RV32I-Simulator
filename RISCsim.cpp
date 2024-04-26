@@ -10,6 +10,8 @@
 #include <sstream>
 #include <cmath>
 #include <cstdint>
+#include <windows.h>
+#include <conio.h>
 using namespace std;
 vector<pair<string, string>> reg;
 map<int, string> fileaddresses;
@@ -777,7 +779,104 @@ bool isX0(string rd)
     else
         return false;
 }
+char menu[4][45]={
+        {" 1] Input Starting Address          "},
+        {" 2] Input RISCVCode File            "},
+        {" 3] Run                             "},
+        {" 4] Exit Solver                     "}
+};
+void ShowConsoleCursor(bool showFlag)
+{
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
 
+    CONSOLE_CURSOR_INFO     cursorInfo;
+
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = showFlag; // set the cursor visibility
+    SetConsoleCursorInfo(out, &cursorInfo);
+}
+
+void setColor(int color)
+{
+    HANDLE hConsole;
+
+    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+}
+void goto_row_col(int row,int col)
+{
+    COORD c;
+    c.X = col;
+    c.Y = row;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
+}
+void showMenu()
+{
+    char ch;
+    int pos=1;
+
+    do
+    {
+        ShowConsoleCursor(false);
+        setColor(15);
+        goto_row_col(10,39);cout << menu[0];
+        goto_row_col(11,39);cout << menu[1];
+        goto_row_col(12,39);cout << menu[2];
+        goto_row_col(13,39);cout << menu[3];
+        setColor(240);
+        goto_row_col(10+pos-1,39);cout << menu[pos-1];
+        ch = getch();
+        switch (ch)
+        {
+            case 13:
+                switch(pos)
+                {
+                    case 1:
+                        setColor(15);
+                        ShowConsoleCursor(true);
+                        system("cls");
+                        int address;
+                        cout << "Input Address :";
+                        cin >> address;
+                        system("cls");
+
+                        break;
+                    case 2:
+                        setColor(15);
+                        ShowConsoleCursor(true);
+                        system("cls");
+                        //ifstream reader("riscvcode.txt");
+                        system("cls");
+                        break;
+                    case 3:
+                        setColor(15);
+                        ShowConsoleCursor(true);
+                        cout << endl;
+
+                        break;
+                    case 4:
+                        setColor(15);
+                        ShowConsoleCursor(true);
+                        exit(0);
+                        break;
+                }
+                break;
+            case -32:
+                ch = getch();
+                switch (ch)
+                {
+                    case 72:
+                        pos--;
+                        if (pos ==0) pos =4;
+                        break;
+                    case 80:
+                        pos++;
+                        if (pos ==5) pos =1;
+                        break;
+                }
+        }
+    } while(true);
+}
 int main()
 {
     int address;
