@@ -11,6 +11,6 @@
 -- Check for working CXX compiler: D:/CLion 2023.2.2/bin/mingw/bin/g++.exe - skipped
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
--- Configuring done (13.5s)
--- Generating done (0.0s)
+-- Configuring done (29.7s)
+-- Generating done (0.2s)
 -- Build files have been written to: D:/AUC/Fall 2023/Digital Design/Project Github/RISC-V-RV32I-Simulator/cmake-build-debug

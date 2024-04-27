@@ -783,9 +783,7 @@ bool isX0(string rd)
 }
 char menu[4][45] = {
     {" 1] Input Starting Address          "},
-    {" 2] Input RISCVCode File            "},
-    {" 3] Run                             "},
-    {" 4] Exit Solver                     "}};
+    {" 2] Exit Solver                     "}};
 void ShowConsoleCursor(bool showFlag)
 {
     HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -849,22 +847,9 @@ int showMenu()
                 break;
             case 2:
                 setColor(15);
-                ShowConsoleCursor(true);
-                system("cls");
-                // ifstream reader("riscvcode.txt");
-                system("cls");
-                break;
-            case 3:
-                setColor(15);
-                ShowConsoleCursor(true);
-                cout << endl;
-
-                break;
-            case 4:
-                setColor(15);
-                ShowConsoleCursor(true);
-                exit(0);
-                break;
+                    ShowConsoleCursor(true);
+                    exit(0);
+                    break;
             }
             break;
         case -32:
