@@ -93,6 +93,7 @@ string dectohex(const string &numstr)
         {
             hexdigit = 'A' + (decimal - 10);
         }
+
         hex += hexdigit;
     }
     return hex;
@@ -847,9 +848,9 @@ int showMenu()
                 break;
             case 2:
                 setColor(15);
-                    ShowConsoleCursor(true);
-                    exit(0);
-                    break;
+                ShowConsoleCursor(true);
+                exit(0);
+                break;
             }
             break;
         case -32:
@@ -870,12 +871,30 @@ int showMenu()
         }
     } while (true);
 }
+void printevstep(int pccounter)
+{
+    cout << left << setw(10) << "REG" << setw(10) << "DEC" << setw(40) << "BIN" << setw(40) << "HEX" << endl;
+
+    for (const auto &linee : reg)
+    {
+        string bin = "0b" + dectobinary(linee.second);
+        string hex = "0x" + dectohex(linee.second);
+        cout << left << setw(10) << linee.first << setw(10) << linee.second << setw(40) << bin << setw(40) << hex << endl;
+    }
+    cout << "PC counter For the Above cycle:" << pccounter << endl;
+    cout << "Memory addresses:" << endl;
+    for (const auto &pair : fileaddresses)
+    {
+        cout << pair.first << ": " << pair.second << endl;
+    }
+    cout << endl;
+}
 char menu2[4][45] = {
     {" 1] Print Register Content         "},
     {" 2] Print Code to be executed       "},
     {" 3] Print Labels and their addresses "},
     {" 4] Exit Solver                     "}};
-void showResult(const vector<pair<string, string>> &reg, const map<int, string> &codeaddresses, const map<int, string> &fakecodeaddresses, int add)
+int showResult(const vector<pair<string, string>> &reg, const map<int, string> &codeaddresses, const map<int, string> &fakecodeaddresses, int add)
 {
     char ch;
     int pos = 1;
@@ -913,20 +932,9 @@ void showResult(const vector<pair<string, string>> &reg, const map<int, string> 
                 {
                     cout << "Registers are empty." << endl;
                 }
-                else
-                {
-                    cout << left << setw(10) << "REG" << setw(10) << "DEC" << setw(40) << "BIN" << setw(40) << "HEX" << endl;
-
-                    for (const auto &linee : reg)
-                    {
-                        string bin = "0b" + dectobinary(linee.second);
-                        string hex = "0x" + dectohex(linee.second);
-                        cout << left << setw(10) << linee.first << setw(10) << linee.second << setw(40) << bin << setw(40) << hex << endl;
-                    }
-                }
+                return 0;
                 getch();
                 system("cls");
-
                 break;
             case 2:
                 setColor(15);
@@ -1086,6 +1094,7 @@ int main()
             }
 
             ADDI(RD, RS1, IMM);
+            printevstep(address);
         }
         else if (insname == "ADD" || insname == "add") // 2
         {
@@ -1097,6 +1106,7 @@ int main()
                 return 0;
             }
             add(RD, RS1, RS2);
+            printevstep(address);
         }
         else if (insname == "SUB" || insname == "sub") // 3
         {
@@ -1110,6 +1120,7 @@ int main()
             else
             {
                 sub(RD, RS1, RS2);
+                printevstep(address);
             }
         }
         else if (insname == "LUI" || insname == "lui") // 4
@@ -1121,6 +1132,7 @@ int main()
                 return 0;
             }
             LUI(RD, IMM);
+            printevstep(address);
         }
         else if (insname == "SLTI" || insname == "slti") // 5
         {
@@ -1134,6 +1146,7 @@ int main()
             else
             {
                 SLTI(RD, RS1, IMM);
+                printevstep(address);
             }
         }
         else if (insname == "SLTIU" || insname == "sltiu") // 6
@@ -1148,6 +1161,7 @@ int main()
             else
             {
                 SLTIU(RD, RS1, IMM);
+                printevstep(address);
             }
         }
         else if (insname == "ORI" || insname == "ori") // 7
@@ -1162,6 +1176,7 @@ int main()
             else
             {
                 ORI(RD, RS1, IMM);
+                printevstep(address);
             }
         }
         else if (insname == "OR" || insname == "or") // 8
@@ -1176,6 +1191,7 @@ int main()
             else
             {
                 OR(RD, RS1, RS2);
+                printevstep(address);
             }
         }
         else if (insname == "AND" || insname == "and") // 9
@@ -1190,6 +1206,7 @@ int main()
             else
             {
                 AND(RD, RS1, RS2);
+                printevstep(address);
             }
         }
         else if (insname == "ANDI" || insname == "andi") // 10
@@ -1204,6 +1221,7 @@ int main()
             else
             {
                 ANDI(RD, RS1, IMM);
+                printevstep(address);
             }
         }
         else if (insname == "XORI" || insname == "xori") // 11
@@ -1218,6 +1236,7 @@ int main()
             else
             {
                 XORI(RD, RS1, IMM);
+                printevstep(address);
             }
         }
         else if (insname == "XOR" || insname == "xor") // 12
@@ -1232,6 +1251,7 @@ int main()
             else
             {
                 XOR(RD, RS1, RS2);
+                printevstep(address);
             }
         }
         else if (insname == "BNE" || insname == "bne") // 13
@@ -1244,6 +1264,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
+            printevstep(address);
             if (it_rd->second != it_rs1->second)
             {
                 for (auto i : fakecodeaddresses)
@@ -1266,6 +1287,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
+            printevstep(address);
             if (it_rd->second == it_rs1->second)
             {
                 for (auto i : fakecodeaddresses)
@@ -1288,6 +1310,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
+            printevstep(address);
             if (stoi(it_rd->second) < stoi(it_rs1->second))
             {
                 for (auto i : fakecodeaddresses)
@@ -1310,6 +1333,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
+            printevstep(address);
             if (stoi(it_rd->second) > stoi(it_rs1->second))
             {
                 for (auto i : fakecodeaddresses)
@@ -1332,6 +1356,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
+            printevstep(address);
             unsigned int rd1 = stoi(it_rd->second);
             unsigned int rs11 = stoi(it_rs1->second);
             if (rd1 < rs11)
@@ -1356,6 +1381,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
+            printevstep(address);
             unsigned int rd1 = stoi(it_rd->second);
             unsigned int rs11 = stoi(it_rs1->second);
             if (rd1 > rs11)
@@ -1383,6 +1409,7 @@ int main()
             {
                 srli(RD, RS1, RS2);
             }
+            printevstep(address);
         }
         else if (insname == "SLLI" || insname == "slli") // 20
         {
@@ -1397,6 +1424,7 @@ int main()
             {
                 slli(RD, RS1, RS2);
             }
+            printevstep(address);
         }
         else if (insname == "SRAI" || insname == "srai") // 21
         {
@@ -1411,6 +1439,7 @@ int main()
             {
                 srai(RD, RS1, RS2);
             }
+            printevstep(address);
         }
         else if (insname == "SLL" || insname == "sll") // 22
         {
@@ -1425,6 +1454,7 @@ int main()
             {
                 sll(RD, RS1, RS2);
             }
+            printevstep(address);
         }
         else if (insname == "SLT" || insname == "slt") // 23
         {
@@ -1439,6 +1469,7 @@ int main()
             {
                 slt(RD, RS1, RS2);
             }
+            printevstep(address);
         }
         else if (insname == "SLTU" || insname == "sltu") // 24
         {
@@ -1453,6 +1484,7 @@ int main()
             {
                 sltu(RD, RS1, RS2);
             }
+            printevstep(address);
         }
         else if (insname == "SRL" || insname == "srl") // 25
         {
@@ -1467,6 +1499,7 @@ int main()
             {
                 srl(RD, RS1, RS2);
             }
+            printevstep(address);
         }
         else if (insname == "SRA" || insname == "sra") // 26
         {
@@ -1481,6 +1514,7 @@ int main()
             {
                 sra(RD, RS1, RS2);
             }
+            printevstep(address);
         }
         else if (insname == "LW" || insname == "lw") // 27
         {
@@ -1496,6 +1530,7 @@ int main()
 
                 LW(RD, RS1, OFF);
             }
+            printevstep(address);
         }
         else if (insname == "LH" || insname == "lh") // 28
         {
@@ -1511,6 +1546,7 @@ int main()
 
                 LH(RD, RS1, OFF);
             }
+            printevstep(address);
         }
         else if (insname == "LB" || insname == "lb") // 29
         {
@@ -1526,6 +1562,7 @@ int main()
 
                 LB(RD, RS1, OFF);
             }
+            printevstep(address);
         }
         else if (insname == "LBU" || insname == "lbu") // 30
         {
@@ -1541,6 +1578,7 @@ int main()
 
                 LBU(RD, RS1, OFF);
             }
+            printevstep(address);
         }
         else if (insname == "LHU" || insname == "lhu") // 31
         {
@@ -1556,6 +1594,7 @@ int main()
 
                 LHU(RD, RS1, OFF);
             }
+            printevstep(address);
         }
         else if (insname == "SB" || insname == "sb") // 32
         {
@@ -1571,6 +1610,7 @@ int main()
 
                 SB(RD, RS1, OFF);
             }
+            printevstep(address);
         }
         else if (insname == "SH" || insname == "sh") // 33
         {
@@ -1586,6 +1626,7 @@ int main()
 
                 SH(RD, RS1, OFF);
             }
+            printevstep(address);
         }
         else if (insname == "SW" || insname == "sw") // 34
         {
@@ -1602,12 +1643,14 @@ int main()
 
                 SW(RD, RS1, OFF);
             }
+            printevstep(address);
         }
         else if (insname == "JAL" || insname == "jal") // 35
         {
             string jump;
             getline(sep, RD, ',');
             getline(sep, jump);
+            printevstep(address);
             if (RD == "zero")
             {
                 for (auto i : fakecodeaddresses)
@@ -1647,6 +1690,7 @@ int main()
                                   { return p.first == RS1; });
             unsigned int sValue = stoi(it_rs1->second); // address stored in register rs1
             int jumpTemp = sValue + stoi(OFF);
+            printevstep(address);
             for (auto i : fakecodeaddresses)
             {
                 if (i.first == jumpTemp)
@@ -1700,6 +1744,7 @@ int main()
                                  { return p.first == RD; });
             int deci = bin_to_dec(auipcstring);
             it_rd->second = to_string(deci);
+            printevstep(address);
         }
         else if (insname == "FENCE" || insname == "ECALL" || insname == "EBREAK") // 40
         {
@@ -1722,11 +1767,6 @@ int main()
             address += 4;
         }
     }
-    showResult(reg, codeaddresses, fakecodeaddresses, address);
-    /*for (pair<string, string> linee : reg)
-    {
-        cout << linee.first << " " << linee.second << endl;
-    }*/
-
-    return 0;
+    if (showResult(reg, codeaddresses, fakecodeaddresses, address) == 0)
+        return 0;
 }
