@@ -764,7 +764,7 @@ void AND(string rd, string rs1, string rs2)
                           { return p.first == rs2; });
     int temp1 = stoi(it_rs1->second);
     int temp2 = stoi(it_rs2->second);
-    int temp3 = temp1 & temp2;
+    int temp3 = temp1 && temp2;
     it_rd->second = to_string(temp3);
 }
 
@@ -998,6 +998,7 @@ int showResult(const vector<pair<string, string>> &reg, const map<int, string> &
 int main()
 {
     int address = showMenu();
+    int startAdd = address;
     int nextStep = 0;
     // cout << "Input starting adress" << endl;
     // cin >> address;
@@ -1084,7 +1085,13 @@ int main()
         cout << pair.first << ": " << pair.second << endl;
     }*/
     auto it = codeaddresses.begin();
-
+    for (auto &i : reg)
+    {
+        if (i.first == "sp")
+        {
+            i.second = to_string(startAdd + 12); // increment stack by 3 words
+        }
+    }
     while (it != codeaddresses.end())
     {
         bool jumpflag = false;
@@ -1943,4 +1950,6 @@ int main()
             address += 4;
         }
     }
+    nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+    return 0;
 }
