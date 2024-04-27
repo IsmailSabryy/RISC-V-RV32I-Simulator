@@ -889,12 +889,13 @@ void printevstep(int pccounter)
     }
     cout << endl;
 }
-char menu2[4][45] = {
+char menu2[5][45] = {
     {" 1] Print Register Content         "},
     {" 2] Print Code to be executed       "},
     {" 3] Print Labels and their addresses "},
-    {" 4] Exit Solver                     "}};
-int showResult(const vector<pair<string, string>> &reg, const map<int, string> &codeaddresses, const map<int, string> &fakecodeaddresses, int add)
+    {" 4] Iterate the next step            "},
+    {" 5] Exit Solver                     "}};
+int showResult(const vector<pair<string, string>> &reg, const map<int, string> &codeaddresses, const map<int, string> &fakecodeaddresses, int PC)
 {
     char ch;
     int pos = 1;
@@ -911,6 +912,8 @@ int showResult(const vector<pair<string, string>> &reg, const map<int, string> &
         cout << menu2[2];
         goto_row_col(13, 39);
         cout << menu2[3];
+        goto_row_col(14, 39);
+        cout << menu2[4];
         setColor(240);
         goto_row_col(10 + pos - 1, 39);
         cout << menu2[pos - 1];
@@ -932,7 +935,8 @@ int showResult(const vector<pair<string, string>> &reg, const map<int, string> &
                 {
                     cout << "Registers are empty." << endl;
                 }
-                return 0;
+                printevstep(PC);
+                //return 0;
                 getch();
                 system("cls");
                 break;
@@ -964,6 +968,11 @@ int showResult(const vector<pair<string, string>> &reg, const map<int, string> &
             case 4:
                 setColor(15);
                 ShowConsoleCursor(true);
+                return 1;
+                break;
+            case 5:
+                setColor(15);
+                ShowConsoleCursor(true);
                 exit(0);
                 break;
             }
@@ -975,11 +984,11 @@ int showResult(const vector<pair<string, string>> &reg, const map<int, string> &
             case 72:
                 pos--;
                 if (pos == 0)
-                    pos = 4;
+                    pos = 5;
                 break;
             case 80:
                 pos++;
-                if (pos == 5)
+                if (pos == 6)
                     pos = 1;
                 break;
             }
@@ -989,6 +998,7 @@ int showResult(const vector<pair<string, string>> &reg, const map<int, string> &
 int main()
 {
     int address = showMenu();
+    int nextStep = 0;
     // cout << "Input starting adress" << endl;
     // cin >> address;
     // int address = 1000;
@@ -1094,7 +1104,11 @@ int main()
             }
 
             ADDI(RD, RS1, IMM);
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            } 
         }
         else if (insname == "ADD" || insname == "add") // 2
         {
@@ -1106,7 +1120,11 @@ int main()
                 return 0;
             }
             add(RD, RS1, RS2);
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "SUB" || insname == "sub") // 3
         {
@@ -1120,7 +1138,12 @@ int main()
             else
             {
                 sub(RD, RS1, RS2);
-                printevstep(address);
+                
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "LUI" || insname == "lui") // 4
@@ -1132,7 +1155,11 @@ int main()
                 return 0;
             }
             LUI(RD, IMM);
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            } 
         }
         else if (insname == "SLTI" || insname == "slti") // 5
         {
@@ -1146,7 +1173,12 @@ int main()
             else
             {
                 SLTI(RD, RS1, IMM);
-                printevstep(address);
+                
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "SLTIU" || insname == "sltiu") // 6
@@ -1161,7 +1193,12 @@ int main()
             else
             {
                 SLTIU(RD, RS1, IMM);
-                printevstep(address);
+                
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "ORI" || insname == "ori") // 7
@@ -1176,7 +1213,12 @@ int main()
             else
             {
                 ORI(RD, RS1, IMM);
-                printevstep(address);
+                
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "OR" || insname == "or") // 8
@@ -1191,7 +1233,12 @@ int main()
             else
             {
                 OR(RD, RS1, RS2);
-                printevstep(address);
+                
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "AND" || insname == "and") // 9
@@ -1206,7 +1253,12 @@ int main()
             else
             {
                 AND(RD, RS1, RS2);
-                printevstep(address);
+                
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "ANDI" || insname == "andi") // 10
@@ -1221,7 +1273,12 @@ int main()
             else
             {
                 ANDI(RD, RS1, IMM);
-                printevstep(address);
+                
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "XORI" || insname == "xori") // 11
@@ -1236,7 +1293,12 @@ int main()
             else
             {
                 XORI(RD, RS1, IMM);
-                printevstep(address);
+                
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "XOR" || insname == "xor") // 12
@@ -1251,7 +1313,12 @@ int main()
             else
             {
                 XOR(RD, RS1, RS2);
-                printevstep(address);
+                
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "BNE" || insname == "bne") // 13
@@ -1264,7 +1331,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            printevstep(address);
+            
             if (it_rd->second != it_rs1->second)
             {
                 for (auto i : fakecodeaddresses)
@@ -1275,6 +1342,11 @@ int main()
                         address = i.first;
                     }
                 }
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "BEQ" || insname == "beq") // 14
@@ -1287,7 +1359,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            printevstep(address);
+            
             if (it_rd->second == it_rs1->second)
             {
                 for (auto i : fakecodeaddresses)
@@ -1298,6 +1370,11 @@ int main()
                         address = i.first;
                     }
                 }
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "BLT" || insname == "blt") // 15
@@ -1310,7 +1387,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            printevstep(address);
+            
             if (stoi(it_rd->second) < stoi(it_rs1->second))
             {
                 for (auto i : fakecodeaddresses)
@@ -1321,6 +1398,11 @@ int main()
                         address = i.first;
                     }
                 }
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "BGE" || insname == "bge") // 16
@@ -1333,7 +1415,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            printevstep(address);
+            
             if (stoi(it_rd->second) > stoi(it_rs1->second))
             {
                 for (auto i : fakecodeaddresses)
@@ -1344,6 +1426,11 @@ int main()
                         address = i.first;
                     }
                 }
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "BLTU" || insname == "blt") // 17
@@ -1356,7 +1443,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            printevstep(address);
+            
             unsigned int rd1 = stoi(it_rd->second);
             unsigned int rs11 = stoi(it_rs1->second);
             if (rd1 < rs11)
@@ -1370,6 +1457,11 @@ int main()
                     }
                 }
             }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "BGEU" || insname == "bgeu") // 18
         {
@@ -1381,7 +1473,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            printevstep(address);
+            
             unsigned int rd1 = stoi(it_rd->second);
             unsigned int rs11 = stoi(it_rs1->second);
             if (rd1 > rs11)
@@ -1394,6 +1486,11 @@ int main()
                         address = i.first;
                     }
                 }
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "SRLI" || insname == "srli") // 19
@@ -1409,7 +1506,11 @@ int main()
             {
                 srli(RD, RS1, RS2);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "SLLI" || insname == "slli") // 20
         {
@@ -1424,7 +1525,11 @@ int main()
             {
                 slli(RD, RS1, RS2);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "SRAI" || insname == "srai") // 21
         {
@@ -1439,7 +1544,11 @@ int main()
             {
                 srai(RD, RS1, RS2);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "SLL" || insname == "sll") // 22
         {
@@ -1454,7 +1563,11 @@ int main()
             {
                 sll(RD, RS1, RS2);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "SLT" || insname == "slt") // 23
         {
@@ -1469,7 +1582,11 @@ int main()
             {
                 slt(RD, RS1, RS2);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "SLTU" || insname == "sltu") // 24
         {
@@ -1484,7 +1601,11 @@ int main()
             {
                 sltu(RD, RS1, RS2);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "SRL" || insname == "srl") // 25
         {
@@ -1499,7 +1620,11 @@ int main()
             {
                 srl(RD, RS1, RS2);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "SRA" || insname == "sra") // 26
         {
@@ -1514,7 +1639,11 @@ int main()
             {
                 sra(RD, RS1, RS2);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "LW" || insname == "lw") // 27
         {
@@ -1530,7 +1659,11 @@ int main()
 
                 LW(RD, RS1, OFF);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "LH" || insname == "lh") // 28
         {
@@ -1546,7 +1679,11 @@ int main()
 
                 LH(RD, RS1, OFF);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "LB" || insname == "lb") // 29
         {
@@ -1562,7 +1699,11 @@ int main()
 
                 LB(RD, RS1, OFF);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "LBU" || insname == "lbu") // 30
         {
@@ -1578,7 +1719,11 @@ int main()
 
                 LBU(RD, RS1, OFF);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "LHU" || insname == "lhu") // 31
         {
@@ -1594,7 +1739,11 @@ int main()
 
                 LHU(RD, RS1, OFF);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "SB" || insname == "sb") // 32
         {
@@ -1610,7 +1759,11 @@ int main()
 
                 SB(RD, RS1, OFF);
             }
-            printevstep(address);
+           nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            } 
         }
         else if (insname == "SH" || insname == "sh") // 33
         {
@@ -1626,7 +1779,11 @@ int main()
 
                 SH(RD, RS1, OFF);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "SW" || insname == "sw") // 34
         {
@@ -1643,14 +1800,18 @@ int main()
 
                 SW(RD, RS1, OFF);
             }
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "JAL" || insname == "jal") // 35
         {
             string jump;
             getline(sep, RD, ',');
             getline(sep, jump);
-            printevstep(address);
+            
             if (RD == "zero")
             {
                 for (auto i : fakecodeaddresses)
@@ -1679,10 +1840,16 @@ int main()
                     }
                 }
             }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "JALR" || insname == "jalr") // 36
         {
             string jump;
+            int tempAdd = address;
             getline(sep, RD, ',');
             getline(sep, RS1, ','); // register containing address
             getline(sep, OFF);
@@ -1690,7 +1857,7 @@ int main()
                                   { return p.first == RS1; });
             unsigned int sValue = stoi(it_rs1->second); // address stored in register rs1
             int jumpTemp = sValue + stoi(OFF);
-            printevstep(address);
+            
             for (auto i : fakecodeaddresses)
             {
                 if (i.first == jumpTemp)
@@ -1720,9 +1887,14 @@ int main()
                         address = i.first;
                         auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                              { return p.first == RD; });
-                        it_rd->second = to_string(address + 4);
+                        it_rd->second = to_string(tempAdd + 4);
                     }
                 }
+            }
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
             }
         }
         else if (insname == "AUIPC" || insname == "auipc") // 37
@@ -1744,7 +1916,11 @@ int main()
                                  { return p.first == RD; });
             int deci = bin_to_dec(auipcstring);
             it_rd->second = to_string(deci);
-            printevstep(address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
         }
         else if (insname == "FENCE" || insname == "ECALL" || insname == "EBREAK") // 40
         {
@@ -1767,6 +1943,4 @@ int main()
             address += 4;
         }
     }
-    if (showResult(reg, codeaddresses, fakecodeaddresses, address) == 0)
-        return 0;
 }
