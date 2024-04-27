@@ -365,7 +365,8 @@ void LB(string rd, string rs1, string offset)
             break;
         }
     }
-    int32_t sign_extended_value = (value << 24) >> 24;
+    int8_t sign_extended_value = value; // Converting value to 8-bit signed integer
+    int32_t sign_extended_32 = static_cast<int32_t>(sign_extended_value);
     for (auto &i : reg)
     {
         if (i.first == rd)
@@ -480,6 +481,8 @@ void SB(string baseAdd, string value, string offset)
     int dValue;
     int effectiveAdd;
     int sValue;
+    int8_t temp8;
+    
 
     for (auto &i : reg)
     {
@@ -497,20 +500,26 @@ void SB(string baseAdd, string value, string offset)
             break;
         }
     }
-    int offsetTemp = stoi(offset) / 4;        // offset can be any number -> if address = 1005 -> find 1004 and store lowest Byte
-    effectiveAdd = dValue + (offsetTemp * 4); // Effective address
-    sValue = sValue & 0xFF;                   // masking the lower 8 bits
-    if (sValue & (1 << 7))
+    if (sValue <= 256)
     {
-        sValue |= 0xFFFFFF00; // Sign extend
-    }
-    for (auto &i : fileaddresses)
-    {
-        if (i.first == effectiveAdd)
+        int offsetTemp = stoi(offset) / 4;        // offset can be any number -> if address = 1005 -> find 1004 and store lowest Byte
+        effectiveAdd = dValue + (offsetTemp * 4); // Effective address
+        sValue = sValue & 0xFF;                   // masking the lower 8 bits
+        //sValue |= 0xFFFFFF00; // Sign extend
+        
+        for (auto &i : fileaddresses)
         {
-            i.second = to_string(sValue);
-            break;
+            if (i.first == effectiveAdd)
+            {
+                i.second = to_string(sValue);
+                break;
+            }
         }
+    }
+    else
+    {
+        system("cls");
+        cout << "Cannot store the value " << sValue << " as a 8 bit byte" << endl;
     }
 }
 
@@ -540,14 +549,22 @@ void SH(string baseAdd, string value, string offset)
     }
     int offsetTemp = stoi(offset) / 4;        // offset can be a multiple of 2 -> if address = 1005 -> find 1004 and store lowest half word
     effectiveAdd = dValue + (offsetTemp * 4); // Effective address
-    sValue = sValue & 0xFFFF;                 // masking the lower 16 bits
-    for (auto &i : fileaddresses)
+    if (sValue <= 65536)
     {
-        if (i.first == effectiveAdd)
+        sValue = sValue & 0xFFFF; // masking the lower 16 bits
+        for (auto &i : fileaddresses)
         {
-            i.second = to_string(sValue);
-            break;
+            if (i.first == effectiveAdd)
+            {
+                i.second = to_string(sValue);
+                break;
+            }
         }
+    }
+    else
+    {
+        system("cls");
+        cout << "Cannot store the value " << sValue << " as a 16 bit halfword" << endl;
     }
 }
 
@@ -928,15 +945,11 @@ int showResult(const vector<pair<string, string>> &reg, const map<int, string> &
                 setColor(15);
                 ShowConsoleCursor(true);
                 system("cls");
-
-                // cout << "Address is : " << add << endl;
-                // getch();
                 if (reg.empty())
                 {
                     cout << "Registers are empty." << endl;
                 }
                 printevstep(PC);
-                //return 0;
                 getch();
                 system("cls");
                 break;
@@ -1000,10 +1013,6 @@ int main()
     int address = showMenu();
     int startAdd = address;
     int nextStep = 0;
-    // cout << "Input starting adress" << endl;
-    // cin >> address;
-    // int address = 1000;
-    // showMenu();
     vector<string> filelines;
     ifstream reader("riscvcode.txt");
     ifstream registerstate("registerstate.txt");
@@ -1075,15 +1084,6 @@ int main()
         itfiner++;
     }
 
-    /*for (const auto &pair : codeaddresses)
-    {
-        cout << pair.first << ": " << pair.second << endl;
-    }
-    cout << "fake:" << endl;
-    for (const auto &pair : fakecodeaddresses)
-    {
-        cout << pair.first << ": " << pair.second << endl;
-    }*/
     auto it = codeaddresses.begin();
     for (auto &i : reg)
     {
@@ -1115,7 +1115,7 @@ int main()
             if (nextStep == 1)
             {
                 nextStep = 0;
-            } 
+            }
         }
         else if (insname == "ADD" || insname == "add") // 2
         {
@@ -1145,7 +1145,6 @@ int main()
             else
             {
                 sub(RD, RS1, RS2);
-                
             }
             nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
@@ -1166,7 +1165,7 @@ int main()
             if (nextStep == 1)
             {
                 nextStep = 0;
-            } 
+            }
         }
         else if (insname == "SLTI" || insname == "slti") // 5
         {
@@ -1180,7 +1179,6 @@ int main()
             else
             {
                 SLTI(RD, RS1, IMM);
-                
             }
             nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
@@ -1200,7 +1198,6 @@ int main()
             else
             {
                 SLTIU(RD, RS1, IMM);
-                
             }
             nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
@@ -1220,7 +1217,6 @@ int main()
             else
             {
                 ORI(RD, RS1, IMM);
-                
             }
             nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
@@ -1240,7 +1236,6 @@ int main()
             else
             {
                 OR(RD, RS1, RS2);
-                
             }
             nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
@@ -1260,7 +1255,6 @@ int main()
             else
             {
                 AND(RD, RS1, RS2);
-                
             }
             nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
@@ -1280,7 +1274,6 @@ int main()
             else
             {
                 ANDI(RD, RS1, IMM);
-                
             }
             nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
@@ -1300,7 +1293,6 @@ int main()
             else
             {
                 XORI(RD, RS1, IMM);
-                
             }
             nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
@@ -1320,7 +1312,6 @@ int main()
             else
             {
                 XOR(RD, RS1, RS2);
-                
             }
             nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
@@ -1338,7 +1329,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            
+
             if (it_rd->second != it_rs1->second)
             {
                 for (auto i : fakecodeaddresses)
@@ -1366,7 +1357,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            
+
             if (it_rd->second == it_rs1->second)
             {
                 for (auto i : fakecodeaddresses)
@@ -1394,7 +1385,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            
+
             if (stoi(it_rd->second) < stoi(it_rs1->second))
             {
                 for (auto i : fakecodeaddresses)
@@ -1422,7 +1413,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            
+
             if (stoi(it_rd->second) > stoi(it_rs1->second))
             {
                 for (auto i : fakecodeaddresses)
@@ -1450,7 +1441,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            
+
             unsigned int rd1 = stoi(it_rd->second);
             unsigned int rs11 = stoi(it_rs1->second);
             if (rd1 < rs11)
@@ -1480,7 +1471,7 @@ int main()
                                  { return p.first == RD; });
             auto it_rs1 = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
                                   { return p.first == RS1; });
-            
+
             unsigned int rd1 = stoi(it_rd->second);
             unsigned int rs11 = stoi(it_rs1->second);
             if (rd1 > rs11)
@@ -1766,11 +1757,11 @@ int main()
 
                 SB(RD, RS1, OFF);
             }
-           nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
             {
                 nextStep = 0;
-            } 
+            }
         }
         else if (insname == "SH" || insname == "sh") // 33
         {
@@ -1818,7 +1809,7 @@ int main()
             string jump;
             getline(sep, RD, ',');
             getline(sep, jump);
-            
+
             if (RD == "zero")
             {
                 for (auto i : fakecodeaddresses)
@@ -1864,7 +1855,7 @@ int main()
                                   { return p.first == RS1; });
             unsigned int sValue = stoi(it_rs1->second); // address stored in register rs1
             int jumpTemp = sValue + stoi(OFF);
-            
+
             for (auto i : fakecodeaddresses)
             {
                 if (i.first == jumpTemp)
@@ -1892,12 +1883,12 @@ int main()
                     {
                         jumpflag = true;
                         address = i.first;
-                        auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
-                                             { return p.first == RD; });
-                        it_rd->second = to_string(tempAdd + 4);
                     }
                 }
             }
+            auto it_rd = find_if(reg.begin(), reg.end(), [&](const pair<string, string> &p)
+                                 { return p.first == RD; });
+            it_rd->second = to_string(tempAdd + 4);
             nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
             if (nextStep == 1)
             {
@@ -1931,12 +1922,24 @@ int main()
         }
         else if (insname == "FENCE" || insname == "ECALL" || insname == "EBREAK") // 40
         {
+            system("cls");
             cout << " Exit instruction entered, aborting process" << endl;
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
             return 0;
         }
         else if (insname == "fence" || insname == "ecall" || insname == "ebreak")
         {
+            system("cls");
             cout << " Exit instruction entered, aborting process" << endl;
+            nextStep = showResult(reg, codeaddresses, fakecodeaddresses, address);
+            if (nextStep == 1)
+            {
+                nextStep = 0;
+            }
             return 0;
         }
         if (jumpflag == false)
